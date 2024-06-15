@@ -8,15 +8,14 @@ import java.io.IOException;
 
 public class Main {
 
-    private static String PATH = "C:\\code\\secDev\\CryNet\\src\\ircserver\\src\\main\\resources\\config.json";
+    // TODO fix issue where absolute path is required
+    private static String PATH = "<INSERT_PATH>";
 
     public static void main(String[] args) throws StreamReadException, DatabindException, IOException {
         // Open configuration file
         ObjectMapper objectMapper = new ObjectMapper();
         Config srvConfig = objectMapper.readValue(new File(PATH), Config.class);
         srvConfig.setIsEncrypted();    
-
-        // create other objects to pass to server
 
         // start server
         IrcServer server = new IrcServer(srvConfig);

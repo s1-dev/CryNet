@@ -9,6 +9,8 @@ public class Config {
     private int maxMessageLength;
     private int maxNickLength;
     private int maxConnections;
+    private String masterAuthDigest;
+    private String botAuthDigest;
 
     public String getServerHostname() {
         return serverHostname;
@@ -68,5 +70,13 @@ public class Config {
 
     public Operator getOperator() {
         return operator;
+    }
+
+    public String getMasterAuthDigest() {
+        return masterAuthDigest;
+    }
+
+    public String getBotAuthDigest() {
+        return botAuthDigest;
     }
 }
