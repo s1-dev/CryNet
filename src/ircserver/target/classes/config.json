@@ -1,0 +1,12 @@
+{
+    "serverHostname": "127.0.0.1",
+    "portNumber": 6667,
+    "operator": {
+        "username": "bob",
+        "password": "smith"
+    }, 
+    "maxChannels": 7,
+    "maxMessageLength": 300,
+    "maxNickLength": 20,
+    "maxConnections": 500
+}
