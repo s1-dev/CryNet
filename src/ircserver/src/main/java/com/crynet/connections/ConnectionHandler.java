@@ -1,4 +1,4 @@
-package com.crynet;
+package com.crynet.connections;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -15,7 +15,6 @@ public class ConnectionHandler implements Connection {
     private BufferedReader input;
     private boolean isAlive;
     private boolean isValidated;
-    private ClientData client;
     private ConnectionManager connectionManager;
 
     public ConnectionHandler(Socket clientSocket, ConnectionManager connectionManager) {
@@ -33,7 +32,7 @@ public class ConnectionHandler implements Connection {
             input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
             while(isAlive) {
-                handleCommand(input.readLine());
+                handleInput(input.readLine());
             }
 
             clean();
@@ -52,29 +51,21 @@ public class ConnectionHandler implements Connection {
         isAlive = false;
     }
 
-    @Override
-    public ClientData getClientData() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getClientData'");
-    }
-
-    private void handleCommand(String command) {
-        try {
-            output.write("TEST123"); // NOT WORKING FIX
-            output.flush();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        System.out.println(command);
-        if(command != null) {
-            connectionManager.handleConnectionCommand(this, command);
+    private void handleInput(String rawInput) {
+        if(rawInput != null) {
+            connectionManager.handleConnectionInput(this, rawInput);
         } else {
             clean();
         }
     }
 
     private void clean() {
+        try {
+            output.close();
+            input.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         connectionManager.closeConnection(this);
     }
 
@@ -91,7 +82,6 @@ public class ConnectionHandler implements Connection {
     @Override
     public void messageClient(String serverResponse) {
         try {
-            System.out.println("naw this hit");
             output.write(serverResponse);
             output.flush();
         } catch (IOException e) {

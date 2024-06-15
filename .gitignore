@@ -1,2 +1,2 @@
-# Ignore target directory
-/target
+# .gitignore
+/src/ircserver/target

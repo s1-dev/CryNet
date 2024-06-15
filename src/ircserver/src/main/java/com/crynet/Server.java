@@ -1,6 +1,8 @@
 package com.crynet;
 
+import com.crynet.connections.Connection;
+
 public interface Server {
     public Config getConfig();
-    public void parseCommand(Connection connection, String command);
+    public void parseRawInput(Connection connection, String command);
 }

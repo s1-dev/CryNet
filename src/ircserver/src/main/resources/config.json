@@ -8,5 +8,7 @@
     "maxChannels": 7,
     "maxMessageLength": 300,
     "maxNickLength": 20,
-    "maxConnections": 500
+    "maxConnections": 500,
+    "masterAuthDigest": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+    "botAuthDigest": "5c550ef1f28fbb43ef893d9243f36caa550858d565bbae647e1cd2168f840d1b"
 }

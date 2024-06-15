@@ -1,7 +1,10 @@
-package com.crynet;
+package com.crynet.connections;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.crynet.ClientData;
+import com.crynet.Server;
 
 public class ConnectionManager {
     private List<Connection> connections;
@@ -25,7 +28,7 @@ public class ConnectionManager {
         connection.validate();
     }
 
-    public void handleConnectionCommand(Connection connection, String command) {
-        ircServerInstance.parseCommand(connection, command);
+    public void handleConnectionInput(Connection connection, String command) {
+        ircServerInstance.parseRawInput(connection, command);
     }
 }
