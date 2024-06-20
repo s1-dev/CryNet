@@ -8,6 +8,8 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.UUID;
 
+import com.crynet.ClientData;
+
 public class ConnectionHandler implements Connection {
     private Socket clientSocket;
     private String connectionId;
@@ -16,6 +18,7 @@ public class ConnectionHandler implements Connection {
     private boolean isAlive;
     private boolean isValidated;
     private ConnectionManager connectionManager;
+    private ClientData client;
 
     public ConnectionHandler(Socket clientSocket, ConnectionManager connectionManager) {
         this.clientSocket = clientSocket;
@@ -23,6 +26,7 @@ public class ConnectionHandler implements Connection {
         this.connectionManager = connectionManager;
         isAlive = true;
         isValidated = false;
+        client = new ClientData();
     }
 
     @Override
@@ -33,11 +37,12 @@ public class ConnectionHandler implements Connection {
 
             while(isAlive) {
                 handleInput(input.readLine());
-            }
-
+            }   
+            
             clean();
         } catch (IOException e) {
             e.printStackTrace();
+            connectionManager.closeConnection(this);
         }
     }
 
@@ -56,17 +61,18 @@ public class ConnectionHandler implements Connection {
             connectionManager.handleConnectionInput(this, rawInput);
         } else {
             clean();
+            connectionManager.closeConnection(this);
         }
     }
 
     private void clean() {
         try {
+            clientSocket.close();
             output.close();
             input.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        connectionManager.closeConnection(this);
     }
 
     @Override
@@ -87,5 +93,20 @@ public class ConnectionHandler implements Connection {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public ClientData getClientData() {
+        return client;
+    }
+
+    @Override
+    public void setClientData(ClientData client) {
+        this.client = client;
+    }
+
+    @Override
+    public boolean isMasterConnection() {
+        return connectionManager.isMasterConnection(connectionId);
     }
 }

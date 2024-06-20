@@ -3,35 +3,30 @@ package com.crynet.commands;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import com.crynet.Config;
+import com.crynet.Server;
 import com.crynet.connections.Connection;
+import com.crynet.connections.ConnectionManager;
 
-public class ValidateCmd implements Command { // Custom IRC command
-    private String[] params;
-    private boolean isValid;
+public class ValidateCmd extends Command {
     private boolean isMasterMsg;
     private Config srvConfig;
-    private Connection connection;
-    private CommandType commandType;
+    private ConnectionManager connectionManager;
     private final int PARAM_COUNT = 3;
-    private final String ERROR_MSG = "Unable to connect :/";
+    private final String ERROR_MSG_1 = "Already validated";
+    private final String ERROR_MSG_2 = "Unable to connect :/";
     private final String SUCCESS_MSG = "Validation sucessful, USER and NICK now";
 
-    public ValidateCmd(boolean isMasterMsg, String[] params, Connection connection, Config srvConfig) {
-        this.params = params;
+    public ValidateCmd(String[] params, Connection connection, boolean isMasterMsg, Server srvInstance) {
+        super(params, connection);
         this.isMasterMsg = isMasterMsg;
-        this.connection = connection;
-        this.srvConfig = srvConfig;
-        this.commandType = CommandType.VALIDATE;
-        checkParams();
+        this.connectionManager = srvInstance.getConnectionManager();
+        this.srvConfig = srvInstance.getConfig();
     }
 
     @Override
     public void performDuty() {
-        // check auth token of either master or bot
-        // tell user to user USER and NICK commands 
-        if (!isValid) {
-            connection.messageClient(ERROR_MSG);
-            connection.kill();
+        if (connection.isValidated()) {
+            connection.messageClient(ERROR_MSG_1);
             return;
         }
 
@@ -48,10 +43,11 @@ public class ValidateCmd implements Command { // Custom IRC command
             }
         }
 
-        if(failedCheck) {
-            connection.messageClient(ERROR_MSG);
-            connection.kill();
+        if(failedCheck) { // On auth failure, kill connection
+            connection.messageClient(ERROR_MSG_2);
+            connectionManager.closeConnection(connection);
         } else {
+            System.out.println("was validated");
             connection.messageClient(SUCCESS_MSG);
             connection.validate();
         }
@@ -59,25 +55,15 @@ public class ValidateCmd implements Command { // Custom IRC command
 
     @Override
     public CommandType getCommandType() {
-        return commandType;
-    }
-
-    @Override
-    public boolean isValidCommand() {
-        return isValid;
+        return CommandType.VALIDATE;
     }
 
     /*
      * VALIDATE command syntax:
-     *  /VALIDATE <AUTH_TOKEN> <MASTER|BOT>
+     *  /VALIDATE <PASSPHRASE> <MASTER|BOT>
      */
-    private void checkParams() {
+    protected void checkParams() {
         if (params.length != PARAM_COUNT) {
-            isValid = false;
-            return;
-        }
-
-        if(isMasterMsg && !params[2].equals("MASTER")) {
             isValid = false;
             return;
         }

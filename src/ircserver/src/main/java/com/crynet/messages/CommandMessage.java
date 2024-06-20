@@ -4,12 +4,10 @@ import com.crynet.commands.Command;
 
 public class CommandMessage implements ExternalMessage {
     private String msgContents;
-    private String connectionId;
     private Command command;
 
-    public CommandMessage(String msgContents, String connectionId) {
+    public CommandMessage(String msgContents) {
         this.msgContents = msgContents;
-        this.connectionId = connectionId;
     }
 
     @Override
@@ -17,18 +15,16 @@ public class CommandMessage implements ExternalMessage {
         return msgContents;
     }
 
-    @Override
-    public String getConnectionId() {
-        return connectionId;
-    }
-
-    @Override
     public Command getCommand() {
         return command;
     }
 
-    @Override
     public void setCommand(Command command) {
         this.command = command;
+    }
+
+    @Override
+    public void proceedWithAction() {
+        command.performDuty();
     }
 }

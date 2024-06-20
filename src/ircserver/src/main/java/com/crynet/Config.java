@@ -11,49 +11,28 @@ public class Config {
     private int maxConnections;
     private String masterAuthDigest;
     private String botAuthDigest;
+    private int maxChannelUsers;
+    private String shutdownDigest;
+    private String shutdownSalt;
 
     public String getServerHostname() {
         return serverHostname;
-    }
-
-    public void setServerHostname(String serverHostname) {
-        this.serverHostname = serverHostname;
     }
 
     public int getPortNumber() {
         return portNumber; 
     }
 
-    public void setPortNumber(int portNumber) {
-        this.portNumber = portNumber;
-    }
-
-    public void setMaxChannels(int maxChannels) {
-        this.maxChannels = maxChannels;
-    }
-
     public int getMaxChannels() {
         return maxChannels;
-    }
-
-    public void setMaxMessageLength(int maxMessageLength) {
-        this.maxMessageLength = maxMessageLength;
     }
 
     public int getMaxMessageLength() {
         return maxMessageLength;
     }
 
-    public void setMaxNickLength(int maxNickLength) {
-        this.maxNickLength = maxNickLength;
-    }
-
     public int getMaxNickLength() {
         return maxNickLength;
-    }
-
-    public void setMaxConnections(int maxConnections) {
-        this.maxConnections = maxConnections;
     }
 
     public int getMaxConnections() {
@@ -78,5 +57,17 @@ public class Config {
 
     public String getBotAuthDigest() {
         return botAuthDigest;
+    }
+
+    public int getMaxChannelUsers() {
+        return maxChannelUsers;
+    }
+
+    public String getShutdownDigest() {
+        return shutdownDigest;
+    }
+
+    public String getShutdownSalt() {
+        return shutdownSalt;
     }
 }
