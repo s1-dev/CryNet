@@ -59,7 +59,7 @@ public class IrcServer implements Server {
         return channelManager;
     }
 
-    public void parseRawInput(Connection connection, String rawInput) {
+    public synchronized void parseRawInput(Connection connection, String rawInput) {
         Message msg = messageParser.parseMessage(connection, rawInput, this);
 
         if (msg instanceof InternalErrorMessage) {
@@ -70,7 +70,7 @@ public class IrcServer implements Server {
         ExternalMessage externalMessage = (ExternalMessage) msg;
 
         if (externalMessage instanceof GeneralMessage) {
-            if (!connection.isValidated() && connection.getClientData().getAllConnectedChannels().isEmpty() && !connection.getClientData().isRegistered()) {
+            if (!connection.isValidated() || connection.getClientData().getAllConnectedChannels().isEmpty() || !connection.getClientData().isRegistered()) {
                 connection.messageClient("ERROR: Validate, register, and join a channel in order to send general messages");
                 return;
             }
@@ -81,14 +81,20 @@ public class IrcServer implements Server {
                 connection.messageClient("ERROR: Incorrect command syntax");
                 return;
             }
+            CommandType msgCommandType = ((CommandMessage)externalMessage).getCommand().getCommandType();
 
-            if (!connection.isValidated() && ((CommandMessage)externalMessage).getCommand().getCommandType() != CommandType.VALIDATE) {
-                connection.messageClient("ERROR: Validate and register before making commands");
-                return;
-            }
-
-            if (!connection.getClientData().isRegistered()) {
-                connection.messageClient("ERROR: Must be registed to perform more commands");
+            if (!connection.isValidated()) {
+                if (!msgCommandType.equals(CommandType.VALIDATE)) {
+                    connection.messageClient("ERROR: Validate and register before making commands");
+                    return;
+                }
+            } else {
+                if (!connection.getClientData().isRegistered()) {
+                    if (!msgCommandType.equals(CommandType.NICK) && !msgCommandType.equals(CommandType.USER)) {
+                        connection.messageClient("ERROR: Must be registed to perform more commands");
+                        return;
+                    }
+                }
             }
         }
 
