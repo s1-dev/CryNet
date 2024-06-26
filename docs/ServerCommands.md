@@ -7,11 +7,11 @@ The `JOIN` command is used to join a channel or create one if it does not curren
 
 ### Syntax
 
-/JOIN <CHANNEL>,...
+/JOIN {CHANNEL},...
 
 ### Parameters
 - **CHANNEL**: The name of the channel to join
-- **<CHANNEL>,...**: Indicates that an list of channels to join or create may be supplied, seperated by commas
+- **{CHANNEL},...**: Indicates that an list of channels to join or create may be supplied, seperated by commas
 
 ### Examples
 - **Example 1**:
@@ -33,7 +33,7 @@ The `KICK` command removes a user from a channel.
 
 ### Syntax
 
-/KICK <CHANNEL> <NICKNAME> :<COMMENT> 
+/KICK {CHANNEL} {NICKNAME} :{COMMENT} 
 
 ### Parameters
 - **CHANNEL**: The name of the channel the user will be kicked from
@@ -59,11 +59,11 @@ The `LIST` command lists all requested channels and the current user counts of e
 
 ### Syntax
 
-/LIST <*|<CHANNEL>...,>
+/LIST {*|{CHANNEL}...,}
 
 ### Parameters
 - **"*"**: If an asterick is supplied, all channels will be listed
-- **<CHANNEL>...,**: A comma seperated list of channels to list
+- **{CHANNEL}...,**: A comma seperated list of channels to list
 
 ### Examples
 - **Example 1**:
@@ -87,10 +87,10 @@ The `NAMES` COMMAND lists the nicknames of users currently in all specified chan
 
 ### Syntax
 
-/NAMES <CHANNEL>,...
+/NAMES {CHANNEL},...
 
 ### Parameters
-- **<CHANNEL>,...**: A comma seperated list of channels to list the nicknames of
+- **{CHANNEL},...**: A comma seperated list of channels to list the nicknames of
 
 ### Examples
 - **Example 1**:
@@ -111,10 +111,10 @@ The `NICK` command sets a nickname for a connection.
 
 ### Syntax
 
-/NICK <NICKNAME>
+/NICK {NICKNAME}
 
 ### Parameters
-- **<NICKNAME>**: Nickname to be applied to the requsting connection
+- **{NICKNAME}**: Nickname to be applied to the requsting connection
 
 ### Examples
 - **Example 1**:
@@ -135,11 +135,11 @@ The `PART` command allows a user to remove itself from specified channels.
 
 ### Syntax
 
-/PART <CHANNEL>,... :<MESSAGE>
+/PART {CHANNEL},... :{MESSAGE}
 
 ### Parameters
-- **<CHANNEL>,...**: Comma seperated list of channels the user wants to leave
-- **<MESSAGE>**: Optional message that will be broadcasted to each channel the user is leaving
+- **{CHANNEL},...**: Comma seperated list of channels the user wants to leave
+- **{MESSAGE}**: Optional message that will be broadcasted to each channel the user is leaving
 
 ### Examples
 - **Example 1**:
@@ -163,11 +163,11 @@ The `PRIVMSG` command allows a user to send a direct message to specified users 
 
 ### Syntax
 
-/PRIVMSG <(#<CHANNEL_NAME>|<NICKNAME>)>,... :<MESSAGE>
+/PRIVMSG {(#{CHANNEL_NAME}|{NICKNAME})},... :{MESSAGE}
 
 ### Parameters
-- **<(#<CHANNEL_NAME>|<NICKNAME>)>,...**: Comma seperated list of channels or nicknames to private message
-- **<MESSAGE>**: Message to send to all receivers
+- **{(#{CHANNEL_NAME}|{NICKNAME})},...**: Comma seperated list of channels or nicknames to private message
+- **{MESSAGE}**: Message to send to all receivers
 
 ### Examples
 - **Example 1**:
@@ -191,10 +191,10 @@ The `QUIT` command allows the user to disconnect from the IRC server.
 
 ### Syntax
 
-/QUIT :<MESSAGE>
+/QUIT :{MESSAGE}
 
 ### Parameters
-- **<MESSAGE>**: Message to send to all channels the user is apart of
+- **{MESSAGE}**: Message to send to all channels the user is apart of
 
 ### Examples
 - **Example 1**:
@@ -215,10 +215,10 @@ The `SHUTDOWN` command allows the master to shutdown the IRC server remotely.
 
 ### Syntax
 
-/SHUTDOWN <SHUTDOWN_TOKEN>
+/SHUTDOWN {SHUTDOWN_TOKEN}
 
 ### Parameters
-- **<SHUTDOWN_TOKEN>**: 64-char string acts as a form of authentication
+- **{SHUTDOWN_TOKEN}**: 64-char string acts as a form of authentication
 
 ### Examples
 - **Example 1**:
@@ -236,11 +236,11 @@ The `TOPIC` command allows for a user to change the topic of a specified channel
 
 ### Syntax
 
-/TOPIC <CHANNEL_NAME> :<TOPIC_CONTENTS>
+/TOPIC {CHANNEL_NAME} :{TOPIC_CONTENTS}
 
 ### Parameters
-- **<CHANNEL_NAME>**: Name of channel to mutate the topic of
-- **<TOPIC_CONTENTS>**: Message to be set as channel topic 
+- **{CHANNEL_NAME}**: Name of channel to mutate the topic of
+- **{TOPIC_CONTENTS}**: Message to be set as channel topic 
 
 ### Examples
 - **Example 1**:
@@ -263,12 +263,12 @@ The `USER` command allows for a user to set their username and realname.
 
 ### Syntax
 
-/USER <USERNAME> 0 * <REALNAME>
+/USER {USERNAME} 0 * {REALNAME}
 
 ### Parameters
-- **<USERNAME>**: Username to be set for a connected user
+- **{USERNAME}**: Username to be set for a connected user
 - **"0 *"**: These represent the hostname and servername, which are not mutable. It is common practice to include these in IRC USER commands
-- **<REALNAME>**: Realname to be set for a connected user
+- **{REALNAME}**: Realname to be set for a connected user
 
 ### Examples
 - **Example 1**:
@@ -289,11 +289,11 @@ The `VALIDATE` command ensures that only the master program and IRC bots created
 
 ### Syntax
 
-/VALIDATE <PASSPHRASE> <MASTER|BOT>
+/VALIDATE {PASSPHRASE} {MASTER|BOT}
 
 ### Parameters
-- **<PASSPHRASE>**: Passphrase which is hashed via SHA-256 and compared with the server's stored hashed master or bot digest 
-- **<MASTER|BOT>**: Identifier to specify whether a bot or the master program is connecting
+- **{PASSPHRASE}**: Passphrase which is hashed via SHA-256 and compared with the server's stored hashed master or bot digest 
+- **{MASTER|BOT}**: Identifier to specify whether a bot or the master program is connecting
 
 ### Examples
 - **Example 1**:
