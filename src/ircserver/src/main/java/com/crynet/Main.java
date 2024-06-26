@@ -9,7 +9,7 @@ import java.io.IOException;
 public class Main {
 
     // TODO fix issue where absolute path is required
-    private static String PATH = "<INSERT_PATH>";
+    private static String PATH = "C:\\code\\secDev\\CryNet\\src\\ircserver\\src\\main\\resources\\config.json";
 
     public static void main(String[] args) throws StreamReadException, DatabindException, IOException {
         // Open configuration file

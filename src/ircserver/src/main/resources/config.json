@@ -6,9 +6,12 @@
         "password": "smith"
     }, 
     "maxChannels": 7,
+    "maxChannelUsers": 500,
     "maxMessageLength": 300,
     "maxNickLength": 20,
     "maxConnections": 500,
     "masterAuthDigest": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
-    "botAuthDigest": "5c550ef1f28fbb43ef893d9243f36caa550858d565bbae647e1cd2168f840d1b"
+    "botAuthDigest": "ecd71870d1963316a97e3ac3408c9835ad8cf0f3c1bc703527c30265534f75ae",
+    "shutdownSalt": "salt123",
+    "shutdownDigest": "ef06332c589534df0ce3be94905c88fc04e2b12b0531a26b4b67d25596aacf04"
 }

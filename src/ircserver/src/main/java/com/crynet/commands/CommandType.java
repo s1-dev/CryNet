@@ -6,5 +6,13 @@ public enum CommandType {
     USER,
     NICK,
     JOIN,
-    VALIDATE
+    TOPIC,
+    VALIDATE,
+    KICK,
+    LIST,
+    SHUTDOWN,
+    PRIVMSG,
+    PART,
+    QUIT,
+    NAMES
 }

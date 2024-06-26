@@ -5,10 +5,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import com.crynet.channels.ChannelManager;
-import com.crynet.commands.ValidateCmd;
+import com.crynet.commands.CommandType;
 import com.crynet.connections.Connection;
 import com.crynet.connections.ConnectionHandler;
 import com.crynet.connections.ConnectionManager;
+import com.crynet.messages.CommandMessage;
 import com.crynet.messages.ExternalMessage;
 import com.crynet.messages.GeneralMessage;
 import com.crynet.messages.InternalErrorMessage;
@@ -19,15 +20,15 @@ public class IrcServer implements Server {
     // Declare private/global vars for class
     private ServerSocket serverSocket;
     private Config srvConfig;
-    private ConnectionManager connectionManager; // instantiate in main or server?
+    private ConnectionManager connectionManager; 
     private MessageParser messageParser;
     private ChannelManager channelManager;
 
     public IrcServer(Config srvConfig) {
         this.srvConfig = srvConfig;
-        this.connectionManager = new ConnectionManager(this);
-        this.channelManager = new ChannelManager();
-        this.messageParser = new MessageParser(2); // Minparams is 2 for now TEMP
+        this.connectionManager = new ConnectionManager(this, srvConfig.getMaxConnections());
+        this.channelManager = new ChannelManager(srvConfig.getMaxChannels(), srvConfig.getMaxChannelUsers());
+        this.messageParser = new MessageParser();
         try {
             this.serverSocket = new ServerSocket(srvConfig.getPortNumber());
         } catch (IOException e) {
@@ -43,10 +44,10 @@ public class IrcServer implements Server {
 
     public void stop() { // This will be accessed if Master program instructs server to shutdown, via a SHUTDOWN command
         // stop server
-        System.out.println("Server stopping...");
-        // Free necessary memory (if JVM doesn't do that for some reason)
+        System.out.println("Server stopping... \n");
         
-        System.exit(0); // Will this suffice? Or do we need a different means 
+        connectionManager.closeAllConnections();
+        System.exit(0);
     }
 
     public Config getConfig() {
@@ -57,41 +58,46 @@ public class IrcServer implements Server {
         return channelManager;
     }
 
-    public void parseRawInput(Connection connection, String rawInput) {
+    public synchronized void parseRawInput(Connection connection, String rawInput) {
         Message msg = messageParser.parseMessage(connection, rawInput, this);
 
         if (msg instanceof InternalErrorMessage) {
             connection.messageClient(msg.getMessageContents());
             return;
         }
-        
-        if(msg instanceof GeneralMessage) {
-            if(connection.isValidated()) { // also check if user is in channel
-                ((GeneralMessage)msg).outputMessage();
-            } else {
-                connection.messageClient("ERROR: Validate and join channel in order to send general messages");
-            }
-            return;
-        }
 
         ExternalMessage externalMessage = (ExternalMessage) msg;
 
-        // if msg command is null, then send general command error
-        if (externalMessage.getCommand() == null) {
-            connection.messageClient("ERROR: Unable to ascertain command syntax");
-            return;
+        if (externalMessage instanceof GeneralMessage) {
+            if (!connection.isValidated() || connection.getClientData().getAllConnectedChannels().isEmpty() || !connection.getClientData().isRegistered()) {
+                connection.messageClient("ERROR: Validate, register, and join a channel in order to send general messages \n");
+                return;
+            }
         }
 
-        // check if validated
-        // if not validated and command is to validate proceed
-        // else send error and terminate, or ask to validate?
-        // if validated then parse command and check if is coming from master or bot
-        if (!connection.isValidated() && externalMessage.getCommand() instanceof ValidateCmd == false) {
-            connection.messageClient("TODO: ERROR MESSAGE"); // hard coded, maybe make static class with errors
-            return;
+        if (externalMessage instanceof CommandMessage) {
+            if (((CommandMessage)externalMessage).getCommand() == null) {
+                connection.messageClient("ERROR: Incorrect command syntax \n");
+                return;
+            }
+            CommandType msgCommandType = ((CommandMessage)externalMessage).getCommand().getCommandType();
+
+            if (!connection.isValidated()) {
+                if (!msgCommandType.equals(CommandType.VALIDATE)) {
+                    connection.messageClient("ERROR: Validate and register before making commands");
+                    return;
+                }
+            } else {
+                if (!connection.getClientData().isRegistered()) {
+                    if (!msgCommandType.equals(CommandType.NICK) && !msgCommandType.equals(CommandType.USER)) {
+                        connection.messageClient("ERROR: Must be registed to perform more commands");
+                        return;
+                    }
+                }
+            }
         }
-        
-        externalMessage.getCommand().performDuty();
+
+        externalMessage.proceedWithAction();
     }
 
     private void acceptConnections() {
@@ -100,11 +106,20 @@ public class IrcServer implements Server {
             try {
                 Socket clientSocket = serverSocket.accept();
                 Connection newConnection = new ConnectionHandler(clientSocket, connectionManager);
+                if (connectionManager.isAtCapacity()) {
+                    clientSocket.close();
+                    continue; // TEST IF THIS WORKS
+                }
                 connectionManager.addConnection(newConnection);
+                //System.out.println("Conn count: " + connectionManager.getConnectionCount());
                 new Thread(newConnection).start();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    public ConnectionManager getConnectionManager() {
+        return connectionManager;
     }
 }

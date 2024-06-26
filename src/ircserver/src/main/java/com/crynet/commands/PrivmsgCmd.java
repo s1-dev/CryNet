@@ -1,23 +1,109 @@
 package com.crynet.commands;
 
-public class PrivmsgCmd implements Command {
+import com.crynet.ClientData;
+import com.crynet.Server;
+import com.crynet.channels.Channel;
+import com.crynet.channels.ChannelManager;
+import com.crynet.connections.Connection;
+import com.crynet.connections.ConnectionManager;
+import com.crynet.utils.StringUtils;
+
+public class PrivmsgCmd extends Command {
+    private ConnectionManager connectionManager;
+    private ChannelManager channelManager;
+    private ClientData sender;
+    private String hostname;
+    private final int PARAM_COUNT = 3;
+    private final int MAX_MSG_LEN = 500;
+    private final String MSG_SYNTAX = ":%s!%s@%s PRIVMSG %s %s \n";
+    private final String ERROR_MSG = "The following receivers did not exist: \n";
+
+    public PrivmsgCmd(String[] params, Connection connection, Server srvInstance) {
+        super(params, connection);
+        this.sender = connection.getClientData();
+        this.hostname = srvInstance.getConfig().getServerHostname();
+        this.connectionManager = srvInstance.getConnectionManager();
+        this.channelManager = srvInstance.getChannelManager();
+    }
 
     @Override
     public void performDuty() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'performDuty'");
+        String[] receivers = params[1].split(",");
+
+        StringBuilder result = new StringBuilder(ERROR_MSG);
+        String joinedMessage = StringUtils.joinStringArray(params, 2);
+
+        for (String receiver : receivers) {
+            boolean receiverExists = false;
+            boolean isChannel = receiver.charAt(0) == '#';
+            String message = String.format(
+                MSG_SYNTAX,
+                sender.getNickname(),
+                sender.getRealname(),
+                hostname,
+                receiver,
+                joinedMessage.substring(1)
+            );
+
+            if (isChannel) { // Receiver is a channel
+                receiverExists = messageChannel(receiver, message);
+            } else { // Receiver is a nickname
+                receiverExists = messageUser(receiver, message);
+            }
+
+            if (!receiverExists) {
+                String subErrorMsg = isChannel ? String.format("The channel %s \n", receiver) : String.format("The nickname %s \n", receiver);
+                result.append(subErrorMsg);
+            }
+        }
+
+        if (!result.toString().equals(ERROR_MSG)) // If some receivers did not exist
+            connection.messageClient(result.toString());
     }
 
     @Override
     public CommandType getCommandType() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getCommandType'");
+        return CommandType.PRIVMSG;
     }
 
-    @Override
-    public boolean isValidCommand() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isValidCommand'");
+    private boolean messageChannel(String channelName, String message) {
+        Channel channel = channelManager.getChannel(channelName);
+        if (channel != null) {
+            channel.broadcastMessage(message, connection, true); 
+        }
+        return false;
     }
 
+    private boolean messageUser(String nickname, String message) {
+        Connection connectionWithNick = connectionManager.getConnectionViaNick(nickname);
+        if (connectionWithNick != null) {
+            connectionWithNick.messageClient(message);
+            return true;
+        }
+        return false;
+    }
+
+    /*
+     * PRIVMSG command syntax:
+     *  /PRIVMSG [<RECEIVER>,...] :<MESSAGE>
+     *  <RECEIVER> = (#<CHANNEL_NAME>|<NICKNAME>)
+     */
+    protected void checkParams() {
+        if (params.length < PARAM_COUNT) {
+            isValid = false;
+            return;
+        }
+
+        if (params[2].charAt(0) != ':') {
+            isValid = false;
+            return;
+        }
+
+        if (StringUtils.joinStringArray(params, 2).length() > MAX_MSG_LEN) {
+            isValid = false;
+            return;
+        }
+
+        isValid = true;
+    }
 }
