@@ -20,7 +20,7 @@ public class CommandBuilder {
         } else if (commandType.equals(CommandType.TOPIC)) {
             cmd = new TopicCmd(params, connection, srvInstance.getChannelManager());
         } else if (commandType.equals(CommandType.KICK)) {
-            cmd = new KickCmd(params, connection, isMasterMsg, srvInstance.getChannelManager());
+            cmd = new KickCmd(params, connection, isMasterMsg, srvInstance);
         } else if (commandType.equals(CommandType.LIST)) {
             cmd = new ListCmd(params, connection, srvInstance.getChannelManager());
         } else if (commandType.equals(CommandType.SHUTDOWN)) {

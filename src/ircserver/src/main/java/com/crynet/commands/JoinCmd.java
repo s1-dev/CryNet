@@ -6,9 +6,9 @@ import com.crynet.connections.Connection;
 
 public class JoinCmd extends Command {
     private ChannelManager channelManager;
-    private final String SUCCESS_MSG = "Joined all channels";
-    private final String ERROR_MSG_1 = "Register before joining a channel";
-    private final String ERROR_MSG_2 = "Maximum channels already reached";
+    private final String SUCCESS_MSG = "Joined all channels \n";
+    private final String ERROR_MSG_1 = "Register before joining a channel \n";
+    private final String ERROR_MSG_2 = "Maximum channels already reached \n";
     private final int PARAM_COUNT = 2;;
 
     public JoinCmd(String[] params, Connection connection, ChannelManager channelManager) {
@@ -36,7 +36,7 @@ public class JoinCmd extends Command {
         }
 
         if (channelsAdded < channelsToJoin.length) {
-            String errorMsg = channelsAdded == 1 ? "Only 1 channel added" : String.format("Only %d channels added", channelsAdded);
+            String errorMsg = channelsAdded == 1 ? "Only 1 channel added \n" : String.format("Only %d channels added \n", channelsAdded);
             connection.messageClient(errorMsg);
         } else {
             connection.messageClient(SUCCESS_MSG);
@@ -55,8 +55,8 @@ public class JoinCmd extends Command {
             connection.getClientData().addChannel(specifiedChannel);
         } else {
             Channel newChannel = new Channel(channelName);
-            newChannel.addConnectedUser(connection);
             channelManager.addChannel(newChannel);
+            newChannel.addConnectedUser(connection);
             connection.getClientData().addChannel(newChannel);
         }
     }

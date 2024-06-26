@@ -1,6 +1,6 @@
 package com.crynet.commands;
 
-import java.util.ArrayList;
+import java.util.Collection;
 
 import com.crynet.channels.Channel;
 import com.crynet.channels.ChannelManager;
@@ -46,12 +46,16 @@ public class ListCmd extends Command {
 
     private String[] getChannelNames(String channelList) {
         if (channelList.equals("*")) {
-            ArrayList<String> channelNameBuilder = new ArrayList<>();
+            Collection<Channel> allChannels = channelManager.getAllChannels();
+            String[] channelNames = new String[allChannels.size()];
+            int i = 0;
 
-            for (Channel channel : channelManager.getAllChannels()) {
-                channelNameBuilder.add(channel.getName());
+            for (Channel channel : allChannels) {
+                channelNames[i] = channel.getName();
+                i++;
             }
-            return (String[]) channelNameBuilder.toArray();
+
+            return channelNames;
         } 
         return channelList.split(",");
     }

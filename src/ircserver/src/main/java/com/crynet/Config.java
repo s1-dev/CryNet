@@ -9,11 +9,11 @@ public class Config {
     private int maxMessageLength;
     private int maxNickLength;
     private int maxConnections;
-    private String masterAuthDigest;
-    private String botAuthDigest;
     private int maxChannelUsers;
     private String shutdownDigest;
     private String shutdownSalt;
+    private String masterAuthDigest;
+    private String botAuthDigest;
 
     public String getServerHostname() {
         return serverHostname;

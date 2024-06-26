@@ -6,6 +6,7 @@ import com.crynet.channels.Channel;
 import com.crynet.channels.ChannelManager;
 import com.crynet.connections.Connection;
 import com.crynet.connections.ConnectionManager;
+import com.crynet.utils.StringUtils;
 
 public class PrivmsgCmd extends Command {
     private ConnectionManager connectionManager;
@@ -14,7 +15,7 @@ public class PrivmsgCmd extends Command {
     private String hostname;
     private final int PARAM_COUNT = 3;
     private final int MAX_MSG_LEN = 500;
-    private final String MSG_SYNTAX = ":%s!%s@%s PRIVMSG %s %s";
+    private final String MSG_SYNTAX = ":%s!%s@%s PRIVMSG %s %s \n";
     private final String ERROR_MSG = "The following receivers did not exist: \n";
 
     public PrivmsgCmd(String[] params, Connection connection, Server srvInstance) {
@@ -30,6 +31,7 @@ public class PrivmsgCmd extends Command {
         String[] receivers = params[1].split(",");
 
         StringBuilder result = new StringBuilder(ERROR_MSG);
+        String joinedMessage = StringUtils.joinStringArray(params, 2);
 
         for (String receiver : receivers) {
             boolean receiverExists = false;
@@ -40,11 +42,11 @@ public class PrivmsgCmd extends Command {
                 sender.getRealname(),
                 hostname,
                 receiver,
-                params[2]
+                joinedMessage.substring(1)
             );
 
             if (isChannel) { // Receiver is a channel
-                receiverExists = messageChannel(receiver.substring(1), message);
+                receiverExists = messageChannel(receiver, message);
             } else { // Receiver is a nickname
                 receiverExists = messageUser(receiver, message);
             }
@@ -67,7 +69,7 @@ public class PrivmsgCmd extends Command {
     private boolean messageChannel(String channelName, String message) {
         Channel channel = channelManager.getChannel(channelName);
         if (channel != null) {
-            channel.broadcastMessage(message); 
+            channel.broadcastMessage(message, connection, true); 
         }
         return false;
     }
@@ -87,7 +89,7 @@ public class PrivmsgCmd extends Command {
      *  <RECEIVER> = (#<CHANNEL_NAME>|<NICKNAME>)
      */
     protected void checkParams() {
-        if (params.length != PARAM_COUNT) {
+        if (params.length < PARAM_COUNT) {
             isValid = false;
             return;
         }
@@ -97,7 +99,7 @@ public class PrivmsgCmd extends Command {
             return;
         }
 
-        if (params[2].length() > MAX_MSG_LEN) {
+        if (StringUtils.joinStringArray(params, 2).length() > MAX_MSG_LEN) {
             isValid = false;
             return;
         }

@@ -10,9 +10,9 @@ public class ShutdownCmd extends Command {
     private Server srvInstance;
     private boolean isMasterMsg;
     private Config serverConfig;
-    private final String ERROR_MSG_1 = "Insufficient permissions for shutdown";
-    private final String ERROR_MSG_2 = "Unable to shutdown :/";
-    private final String SUCCESS_MSG = "Server shutting down!";
+    private final String ERROR_MSG_1 = "Insufficient permissions for shutdown \n";
+    private final String ERROR_MSG_2 = "Unable to shutdown :/ \n";
+    private final String SUCCESS_MSG = "Server shutting down! \n";
     private final int PARAM_COUNT = 2;
 
     public ShutdownCmd(String[] params, Connection connection, boolean isMasterMsg, Server srvInstance) {

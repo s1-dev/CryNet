@@ -1,6 +1,7 @@
 package com.crynet.connections;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.crynet.ClientData;
@@ -21,7 +22,7 @@ public class ConnectionManager {
     }
 
     public synchronized Connection getConnectionViaNick(String nickname) {
-        for (Connection connection : connections) {
+        for (Connection connection : getImmutableConnections()) {
             if (connection.getClientData().getNickname().equals(nickname))
                 return connection;
         }
@@ -37,16 +38,16 @@ public class ConnectionManager {
     }
 
     public synchronized void closeAllConnections() {
-        for (Connection connection : connections) {
+        for (Connection connection : getImmutableConnections()) {
             killConnection(connection);
         }
     }
 
     public synchronized boolean connectionRegistered(String nickname) {
-        for (Connection conn : connections) {
+        for (Connection conn : getImmutableConnections()) {
             ClientData client = conn.getClientData();
             if (client != null) {
-                if (client.getNickname().equals(nickname)) {
+                if (client.getNickname() != null && client.getNickname().equals(nickname)) {
                     return true;
                 }
             }
@@ -63,7 +64,7 @@ public class ConnectionManager {
     }
 
     public synchronized void markMasterConnection(String connectionId) {
-        if(!masterConnectionId.equals(MASTER_NOT_SET) && containsConnection(connectionId)) {
+        if(masterConnectionId.equals(MASTER_NOT_SET) && containsConnection(connectionId)) {
             this.masterConnectionId = connectionId;
         }
     }
@@ -72,16 +73,27 @@ public class ConnectionManager {
         return connectionId.equals(masterConnectionId);
     }
 
+    public synchronized boolean masterIsSet() {
+        return !masterConnectionId.equals(MASTER_NOT_SET);
+    }    
+
     private synchronized boolean containsConnection(String connectionId) {
-        for (Connection connection : connections) {
+        for (Connection connection : getImmutableConnections()) {
             if (connection.getId().equals(connectionId)) 
                 return true;
         }
         return false;
     }
 
-    private void killConnection(Connection connection) {
+    private synchronized void killConnection(Connection connection) {
+        if (connection.isMasterConnection()) {
+            markMasterConnection(MASTER_NOT_SET);
+        }
         connections.remove(connection);
         connection.kill();
+    }
+
+    public synchronized List<Connection> getImmutableConnections() {
+        return Collections.unmodifiableList(new ArrayList<>(connections));
     }
 }

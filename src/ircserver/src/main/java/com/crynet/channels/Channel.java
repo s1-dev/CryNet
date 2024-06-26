@@ -1,5 +1,6 @@
 package com.crynet.channels;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -12,12 +13,14 @@ public class Channel {
     private String channelTopic;
     private List<Connection> connectedUsers;
     private int maxUsers;
-    private final String DEFAULT_TOPIC = "Topic not set for the %s channel";
+    private final String DEFAULT_TOPIC = "Topic not set for the %s channel \n";
     
     public Channel(String channelName) {
         this.channelName = prependPoundSymbol(channelName);
         this.channelId = UUID.randomUUID().toString();
         this.channelTopic = String.format(DEFAULT_TOPIC, channelName);
+        this.connectedUsers = new ArrayList<>();
+        this.maxUsers = 1; // To mitigate an issue where the channelmanager doesn't set maxUsers before the owner is added
     }
 
     private String prependPoundSymbol(String channelName) {
@@ -55,8 +58,10 @@ public class Channel {
         return nicks;
     }
 
-    public synchronized void broadcastMessage(String message) {
+    public synchronized void broadcastMessage(String message, Connection sender, boolean excludeSender) {
         for (Connection user : connectedUsers) {
+            if (excludeSender && user.equals(sender))
+                continue;
             user.messageClient(message);
         }
     }

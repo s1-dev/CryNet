@@ -1,7 +1,7 @@
 package com.crynet.channels;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 
 public class ChannelManager {
     // KEY->NAME VAL->CHANNEL OBJ
@@ -36,8 +36,12 @@ public class ChannelManager {
         return activeChannels.get(channelName);
     }
 
-    public List<Channel> getAllChannels() {
-        return (List<Channel>) activeChannels.values();
+    public boolean channelNameExists(String channelName) {
+        return activeChannels.containsKey(channelName);
+    } 
+
+    public Collection<Channel> getAllChannels() {
+        return activeChannels.values();
     }
 
     public boolean isAtMax() {

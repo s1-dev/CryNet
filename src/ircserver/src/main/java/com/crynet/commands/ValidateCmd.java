@@ -12,9 +12,9 @@ public class ValidateCmd extends Command {
     private Config srvConfig;
     private ConnectionManager connectionManager;
     private final int PARAM_COUNT = 3;
-    private final String ERROR_MSG_1 = "Already validated";
-    private final String ERROR_MSG_2 = "Unable to connect :/";
-    private final String SUCCESS_MSG = "Validation sucessful, USER and NICK now";
+    private final String ERROR_MSG_1 = "Already validated \n";
+    private final String ERROR_MSG_2 = "Unable to connect :/ \n";
+    private final String SUCCESS_MSG = "Validation sucessful, USER and NICK now \n";
 
     public ValidateCmd(String[] params, Connection connection, boolean isMasterMsg, Server srvInstance) {
         super(params, connection);
@@ -30,6 +30,12 @@ public class ValidateCmd extends Command {
             return;
         }
 
+        if (isMasterMsg && connectionManager.masterIsSet()) {
+            connection.messageClient(ERROR_MSG_2);
+            connectionManager.closeConnection(connection);
+            return;
+        }
+
         String sha256sum = DigestUtils.sha256Hex(params[1]).toLowerCase();
         boolean failedCheck = false;
 
@@ -40,6 +46,7 @@ public class ValidateCmd extends Command {
         } else {
             if (!sha256sum.equals(srvConfig.getBotAuthDigest().toLowerCase())) {
                 failedCheck = true;
+                System.out.println("Bot failed");
             }
         }
 
@@ -47,9 +54,10 @@ public class ValidateCmd extends Command {
             connection.messageClient(ERROR_MSG_2);
             connectionManager.closeConnection(connection);
         } else {
-            System.out.println("was validated");
             connection.messageClient(SUCCESS_MSG);
             connection.validate();
+            if (isMasterMsg)
+                connectionManager.markMasterConnection(connection.getId());
         }
     }
 

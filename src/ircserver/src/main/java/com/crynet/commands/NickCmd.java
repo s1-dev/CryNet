@@ -5,8 +5,8 @@ import com.crynet.connections.ConnectionManager;
 
 public class NickCmd extends Command {
     private ConnectionManager connectionManager;
-    private final String SUCCESS_MSG = "Nickname set";
-    private final String ERROR_MSG = "Nickname is already in use";
+    private final String SUCCESS_MSG = "Nickname set \n";
+    private final String ERROR_MSG = "Nickname is already in use \n";
     private final int PARAM_COUNT = 2;
     private final int MAX_NICK_LEN = 20;
     private final int MIN_NICK_LEN = 2;

@@ -6,8 +6,8 @@ public class UserCmd extends Command {
     private final int PARAM_COUNT = 5;
     private final int MAX_USERNAME_LEN = 30;
     private final int MAX_REALNAME_LEN = 30;
-    private final String ERROR_MSG = "Nickname must be set first";
-    private final String SUCCESS_MSG = "Username and realname set";
+    private final String ERROR_MSG = "Nickname must be set first \n";
+    private final String SUCCESS_MSG = "Username and realname set \n";
 
     public UserCmd(String[] params, Connection connection) {
         super(params, connection);

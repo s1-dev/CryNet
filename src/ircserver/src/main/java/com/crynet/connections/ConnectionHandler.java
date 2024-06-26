@@ -86,7 +86,7 @@ public class ConnectionHandler implements Connection {
     }
 
     @Override
-    public void messageClient(String serverResponse) {
+    public void messageClient(String serverResponse) { // TODO append newline char before messaging client and remove from formatted messages
         try {
             output.write(serverResponse);
             output.flush();

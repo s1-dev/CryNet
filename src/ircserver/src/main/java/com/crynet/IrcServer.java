@@ -44,11 +44,10 @@ public class IrcServer implements Server {
 
     public void stop() { // This will be accessed if Master program instructs server to shutdown, via a SHUTDOWN command
         // stop server
-        System.out.println("Server stopping...");
-        // Free necessary memory (if JVM doesn't do that for some reason)
-
+        System.out.println("Server stopping... \n");
+        
         connectionManager.closeAllConnections();
-        System.exit(0); // Will this suffice? Or do we need a different means 
+        System.exit(0);
     }
 
     public Config getConfig() {
@@ -71,14 +70,14 @@ public class IrcServer implements Server {
 
         if (externalMessage instanceof GeneralMessage) {
             if (!connection.isValidated() || connection.getClientData().getAllConnectedChannels().isEmpty() || !connection.getClientData().isRegistered()) {
-                connection.messageClient("ERROR: Validate, register, and join a channel in order to send general messages");
+                connection.messageClient("ERROR: Validate, register, and join a channel in order to send general messages \n");
                 return;
             }
         }
 
         if (externalMessage instanceof CommandMessage) {
             if (((CommandMessage)externalMessage).getCommand() == null) {
-                connection.messageClient("ERROR: Incorrect command syntax");
+                connection.messageClient("ERROR: Incorrect command syntax \n");
                 return;
             }
             CommandType msgCommandType = ((CommandMessage)externalMessage).getCommand().getCommandType();
@@ -112,6 +111,7 @@ public class IrcServer implements Server {
                     continue; // TEST IF THIS WORKS
                 }
                 connectionManager.addConnection(newConnection);
+                //System.out.println("Conn count: " + connectionManager.getConnectionCount());
                 new Thread(newConnection).start();
             } catch (IOException e) {
                 e.printStackTrace();

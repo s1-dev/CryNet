@@ -4,17 +4,20 @@ import java.util.List;
 
 import com.crynet.ClientData;
 import com.crynet.channels.Channel;
+import com.crynet.connections.Connection;
 
 public class GeneralMessage implements ExternalMessage {
     private String messageContents;
+    private Connection connection;
     private ClientData sender;
     private String hostname;
-    private final String MSG_SYNTAX = ":%s!%s@%s MSG %s %s";
+    private final String MSG_SYNTAX = ":%s!%s@%s MSG %s %s \n";
 
-    public GeneralMessage(String messageContents, ClientData sender, String hostname) {
+    public GeneralMessage(String messageContents, Connection connection, String hostname) {
         this.messageContents = messageContents;
         this.hostname = hostname;
-        this.sender = sender;
+        this.connection = connection;
+        this.sender = connection.getClientData();
     }
 
     @Override
@@ -35,7 +38,7 @@ public class GeneralMessage implements ExternalMessage {
                 channel.getName(),
                 messageContents
             );
-            channel.broadcastMessage(formattedMessage);
+            channel.broadcastMessage(formattedMessage, connection, true);
         }
     }
 }
