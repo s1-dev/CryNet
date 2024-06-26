@@ -7,14 +7,11 @@ import java.io.File;
 import java.io.IOException;
 
 public class Main {
-
-    // TODO fix issue where absolute path is required
-    private static String PATH = "C:\\code\\secDev\\CryNet\\src\\ircserver\\src\\main\\resources\\config.json";
-
+    private static final String CONFIG_PATH = "src/ircserver/src/main/resources/config.json";
     public static void main(String[] args) throws StreamReadException, DatabindException, IOException {
         // Open configuration file
         ObjectMapper objectMapper = new ObjectMapper();
-        Config srvConfig = objectMapper.readValue(new File(PATH), Config.class);
+        Config srvConfig = objectMapper.readValue(new File(CONFIG_PATH), Config.class);
         srvConfig.setIsEncrypted();    
 
         // start server
