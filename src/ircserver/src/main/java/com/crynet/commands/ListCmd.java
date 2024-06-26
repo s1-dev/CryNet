@@ -62,7 +62,7 @@ public class ListCmd extends Command {
 
     /*
      * LIST command syntax:
-     *  /LIST <*|[<CHANNEL]>
+     *  /LIST <*|[<CHANNEL>]>
      */
     protected void checkParams() {
         if (params.length != PARAM_COUNT) {

@@ -63,7 +63,7 @@ public class JoinCmd extends Command {
 
     /*
      * JOIN command syntax:
-     *  /JOIN <CHANNEL>{,<CHANNEL>}
+     *  /JOIN [<CHANNEL>]
      */
     protected void checkParams() {
         if (params.length != PARAM_COUNT) {
