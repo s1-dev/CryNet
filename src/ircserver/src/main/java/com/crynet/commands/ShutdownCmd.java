@@ -14,6 +14,7 @@ public class ShutdownCmd extends Command {
     private final String ERROR_MSG_2 = "Unable to shutdown :/ \n";
     private final String SUCCESS_MSG = "Server shutting down! \n";
     private final int PARAM_COUNT = 2;
+    private final int TOKEN_LEGNTH = 64;
 
     public ShutdownCmd(String[] params, Connection connection, boolean isMasterMsg, Server srvInstance) {
         super(params, connection);
@@ -53,6 +54,11 @@ public class ShutdownCmd extends Command {
      */
     protected void checkParams() {
         if (params.length != PARAM_COUNT) {
+            isValid = false;
+            return;
+        }
+
+        if (params[1].length() != TOKEN_LEGNTH) {
             isValid = false;
             return;
         }
