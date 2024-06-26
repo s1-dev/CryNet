@@ -274,9 +274,6 @@ The `USER` command allows for a user to set their username and realname.
 - **Example 1**:
     /USER testUsername 0 * testRealName
 
-- **Example 2**: 
-    /TOPIC #testChannel :greatest topic of all time
-
 ### Notes
 * The username and realname must be set, alongside a nickname, in order to join channels, send messages, and issue server commands
 
