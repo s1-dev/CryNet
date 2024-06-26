@@ -1,2 +1,3 @@
 # .gitignore
 /src/ircserver/target
+.vscode/
