@@ -7,11 +7,11 @@ The `JOIN` command is used to join a channel or create one if it does not curren
 
 ### Syntax
 
-/JOIN [<CHANNEL>]
+/JOIN <CHANNEL>,...
 
 ### Parameters
 - **CHANNEL**: The name of the channel to join
-- **[<CHANNEL>]**: Indicates that an list of channels to join or create may be supplied, seperated by commas
+- **<CHANNEL>,...**: Indicates that an list of channels to join or create may be supplied, seperated by commas
 
 ### Examples
 - **Example 1**:
@@ -59,11 +59,11 @@ The `LIST` command lists all requested channels and the current user counts of e
 
 ### Syntax
 
-/LIST <*|[<CHANNEL]>
+/LIST <*|<CHANNEL>...,>
 
 ### Parameters
 - **"*"**: If an asterick is supplied, all channels will be listed
-- **[<CHANNEL>]**: A comma seperated list of channels to list
+- **<CHANNEL>...,**: A comma seperated list of channels to list
 
 ### Examples
 - **Example 1**:
@@ -87,10 +87,10 @@ The `NAMES` COMMAND lists the nicknames of users currently in all specified chan
 
 ### Syntax
 
-/NAMES [<CHANNEL>]
+/NAMES <CHANNEL>,...
 
 ### Parameters
-- **[<CHANNEL>]**: A comma seperated list of channels to list the nicknames of
+- **<CHANNEL>,...**: A comma seperated list of channels to list the nicknames of
 
 ### Examples
 - **Example 1**:
@@ -135,10 +135,10 @@ The `PART` command allows a user to remove itself from specified channels.
 
 ### Syntax
 
-/PART [<CHANNEL>,...] :<MESSAGE>
+/PART <CHANNEL>,... :<MESSAGE>
 
 ### Parameters
-- **[<CHANNEl>]**: Comma seperated list of channels the user wants to leave
+- **<CHANNEL>,...**: Comma seperated list of channels the user wants to leave
 - **<MESSAGE>**: Optional message that will be broadcasted to each channel the user is leaving
 
 ### Examples
@@ -163,10 +163,10 @@ The `PRIVMSG` command allows a user to send a direct message to specified users 
 
 ### Syntax
 
-/PRIVMSG [<(#<CHANNEL_NAME>|<NICKNAME>)>,...] :<MESSAGE>
+/PRIVMSG <(#<CHANNEL_NAME>|<NICKNAME>)>,... :<MESSAGE>
 
 ### Parameters
-- **[<(#<CHANNEL_NAME>|<NICKNAME>)>]**: Comma seperated list of channels or nicknames to private message
+- **<(#<CHANNEL_NAME>|<NICKNAME>)>,...**: Comma seperated list of channels or nicknames to private message
 - **<MESSAGE>**: Message to send to all receivers
 
 ### Examples
