@@ -1,6 +1,7 @@
 package com.crynet;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.crynet.channels.Channel;
@@ -32,7 +33,7 @@ public class ClientData {
     }
 
     public List<Channel> getAllConnectedChannels() {
-        return connectedChannels;
+        return Collections.unmodifiableList(new ArrayList<>(connectedChannels)); // Immutable list in order to avoid java.util.ConcurrentModificationException
     }
 
     public String getUsername() {
