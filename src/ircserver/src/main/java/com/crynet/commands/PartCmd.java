@@ -78,25 +78,21 @@ public class PartCmd extends Command {
      */
     protected void checkParams() {
         if (params.length < PARAM_COUNT) {
-            System.out.println("case1");
             isValid = false;
             return;
         }
 
         if (params[1].length() > MAX_CHANNELS_INPUT) {
-            System.out.println("case2");
             isValid = false;
             return;
         }
 
         if (params.length >= PARAM_COUNT && StringUtils.joinStringArray(params, 2).length() > MAX_MSG_LEN) {
-            System.out.println("case3");
             isValid = false;
             return;
         }
 
         if (params.length >= PARAM_COUNT && params[2].charAt(0) != ':') { // If the optional message is set
-            System.out.println("case4");
             isValid = false;
             return;
         }
