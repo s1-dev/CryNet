@@ -70,6 +70,7 @@ public class PrivmsgCmd extends Command {
         Channel channel = channelManager.getChannel(channelName);
         if (channel != null) {
             channel.broadcastMessage(message, connection, true); 
+            return true;
         }
         return false;
     }

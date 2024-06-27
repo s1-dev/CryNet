@@ -12,7 +12,7 @@ public class PartCmd extends Command {
     private String hostname;
     private final String MSG_SYNTAX = ":%s!%s@%s PART %s %s \n";
     private final String ERROR_MSG = "The following errors occured: \n";
-    private final int PARAM_COUNT = 3;
+    private final int PARAM_COUNT = 2;
     private final int MAX_MSG_LEN = 500;
     private final int MAX_CHANNELS_INPUT = 500;
 
@@ -31,7 +31,13 @@ public class PartCmd extends Command {
 
         String joinedMessage = StringUtils.joinStringArray(params, 2);
         for (String channelName : channels) {
-            Channel currChannel = channelManager.getChannel(channelName);
+            Channel currChannel = null;
+            if (channelManager.channelNameExists(channelName)) {
+                currChannel = channelManager.getChannel(channelName);
+            } else {
+                errorMsg.append(String.format("The %s channel does not exist \n", channelName));
+                continue;
+            }
             if (currChannel != null && currChannel.containsUser(connection)) {
                 if (params.length == PARAM_COUNT)
                     messageChannel(currChannel, joinedMessage);
@@ -39,9 +45,7 @@ public class PartCmd extends Command {
                 channelManager.removeIfEmpty(currChannel.getName());
                 sender.removeChannel(currChannel);
             } else {
-                String currError = !currChannel.containsUser(connection) 
-                ? String.format("You are not a part of the %s channel \n", currChannel.getName()) 
-                : String.format("The %s channel does not exist \n", currChannel.getName());
+                String currError = String.format("You are not a part of the %s channel \n", currChannel.getName());
                 errorMsg.append(currError);
             }
         }

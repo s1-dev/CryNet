@@ -4,7 +4,6 @@ public class Config {
     private String serverHostname;
     private int portNumber; // standard to use 6667 for unencrypted and 6697 for SSL/TLS
     private boolean isEncrypted; // set true if port is 6697
-    private Operator operator;
     private int maxChannels;
     private int maxMessageLength;
     private int maxNickLength;
@@ -45,10 +44,6 @@ public class Config {
 
     public void setIsEncrypted() {
         this.isEncrypted = this.portNumber == 6697;
-    }
-
-    public Operator getOperator() {
-        return operator;
     }
 
     public String getMasterAuthDigest() {
