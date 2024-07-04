@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.crynet.channels.Channel;
+import com.crynet.channels.ChannelManager;
 
 public class ClientData {
     private String username;
@@ -25,11 +26,23 @@ public class ClientData {
     }
 
     public Channel getConnectedChannel(String channelName) {
-        for (Channel channel : connectedChannels) {
+        for (Channel channel : getAllConnectedChannels()) {
             if (channel.getName().equals(channelName))
                 return channel;
         }
         return null;
+    }
+
+    public int countOfConnectedChannels() { 
+        return connectedChannels.size();
+    }
+
+    public void leaveAllChannels(ChannelManager channelManager) { // Find better solution than passing ChannelManager object to method
+        for (Channel channel : getAllConnectedChannels()) {
+            channel.removeUserViaNick(nickname);
+            channelManager.removeIfEmpty(channel.getName());
+            removeChannel(channel);
+        }
     }
 
     public List<Channel> getAllConnectedChannels() {

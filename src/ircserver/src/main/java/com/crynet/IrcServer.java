@@ -26,8 +26,8 @@ public class IrcServer implements Server {
 
     public IrcServer(Config srvConfig) {
         this.srvConfig = srvConfig;
-        this.connectionManager = new ConnectionManager(this, srvConfig.getMaxConnections());
         this.channelManager = new ChannelManager(srvConfig.getMaxChannels(), srvConfig.getMaxChannelUsers());
+        this.connectionManager = new ConnectionManager(this, srvConfig.getMaxConnections(), srvConfig.getServerHostname(), channelManager);
         this.messageParser = new MessageParser();
         try {
             this.serverSocket = new ServerSocket(srvConfig.getPortNumber());
@@ -111,7 +111,6 @@ public class IrcServer implements Server {
                     continue; // TEST IF THIS WORKS
                 }
                 connectionManager.addConnection(newConnection);
-                //System.out.println("Conn count: " + connectionManager.getConnectionCount());
                 new Thread(newConnection).start();
             } catch (IOException e) {
                 e.printStackTrace();
