@@ -40,8 +40,6 @@ public class ConnectionHandler implements Connection {
             while(isAlive) {
                 handleInput(input.readLine());
             }   
-            System.out.println("This hit?");
-            System.out.println(connectionManager.getImmutableConnections().size());
             
             clean();
         } catch (IOException e) {

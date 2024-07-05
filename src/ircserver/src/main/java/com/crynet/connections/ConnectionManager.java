@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.crynet.ClientData;
 import com.crynet.Server;
-import com.crynet.channels.Channel;
 import com.crynet.channels.ChannelManager;
 
 public class ConnectionManager {
