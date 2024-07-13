@@ -1,22 +1,20 @@
 #include "MessageParser.h"
-#include "ActionInfo.hpp"
 #include "ActionType.hpp"
 
-std::vector<std::string> splitMessage(const std::string &message) {
-        std::vector<std::string> result;
-    std::istringstream stream(message);
-    std::string word;
+std::vector<std::string> buildParams(const char* firstParam, const char** otherParams, unsigned int paramCount) {
+    std::vector<std::string> newParams;
+    newParams.push_back(std::string(firstParam));
 
-    while (stream >> word) { 
-        result.push_back(word);
+    for (unsigned int i = 0; i < paramCount; i++) {
+        newParams.push_back(std::string(otherParams[i]));
     }
 
-    return result;
+    return newParams;
 }
 
 
-ActionInfo MessageParser::parseMessage(const std::string& rawMessage) {
-    std::vector<std::string> messageParams = splitMessage(rawMessage);
+ActionInfo MessageParser::parseMessage(const char* firstParam, const char** otherParams, unsigned int paramCount) {
+    std::vector<std::string> messageParams = buildParams(firstParam, otherParams, paramCount);
     std::string strActionType = messageParams[0];
     ActionType actionType;
     if (strActionType == "PING") {

@@ -2,34 +2,45 @@
 CXX = g++
 
 # Compiler flags
-CXXFLAGS = -Wall -std=c++11
+CXXFLAGS = -std=c++11 -Wall -Wextra -Iinclude
 
-# Target executable name
-TARGET = bot
+# Linker flags
+LDFLAGS = -lircclient
+
+# Directories
+SRC_DIR = src
+OBJ_DIR = obj
+BIN_DIR = bin
+
+# Target executable
+TARGET = $(BIN_DIR)/irc_bot
 
 # Source files
-SRCS = ActionInfo.cpp BotMain.cpp IrcClient.cpp MessageParser.cpp
-
-# Header files (for dependency generation)
-HEADERS = ActionInfo.hpp ActionType.hpp IrcClient.h MessageParser.h
+SRCS = $(wildcard $(SRC_DIR)/*.cpp)
 
 # Object files
-OBJS = $(SRCS:.cpp=.o)
+OBJS = $(SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 
-# Default rule
+# Default target
 all: $(TARGET)
 
-# Link object files to create the executable
-$(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $@ $^
+# Link the target executable
+$(TARGET): $(OBJS) | $(BIN_DIR)
+	$(CXX) $(OBJS) -o $@ $(LDFLAGS)
 
-# Compile source files into object files
-%.o: %.cpp $(HEADERS)
+# Compile source files to object files
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Create directories if they don't exist
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
+
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
 
 # Clean up build files
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -rf $(OBJ_DIR) $(BIN_DIR)
 
-# Phony targets
 .PHONY: all clean

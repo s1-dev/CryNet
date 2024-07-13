@@ -26,6 +26,9 @@ private:
 
     static void event_connect(irc_session_t* session, const char* event, const char* origin, const char** params, unsigned int count);
     static void event_unknown(irc_session_t* session, const char* event, const char* origin, const char** params, unsigned int count);
+    static void dump_event(irc_session_t* session, const char* event, const char* origin, const char** params, unsigned int count);
+    static void parseEvent(irc_session_t* session, const char* event, const char* origin, const char** params, unsigned int count);
+
 
     static IrcClient* getInstance(irc_session_t* session);
 };

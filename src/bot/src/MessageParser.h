@@ -5,11 +5,11 @@
 #include <vector>
 #include <sstream>
 #include <cstring>
-#include "ActionInfo.cpp"
+#include "ActionInfo.hpp"
 
 class MessageParser {
 public:
-    static ActionInfo parseMessage(const std::string& rawMessage);
+    static ActionInfo parseMessage(const char* firstParam, const char** otherParams, unsigned int paramCount);
 
 private:
     // Private constructor to prevent instantiation

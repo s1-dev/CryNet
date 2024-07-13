@@ -1,6 +1,6 @@
 #include "IrcClient.h"
-#include "ActionInfo.hpp"
 #include "MessageParser.h"
+#include "ActionInfo.hpp"
 #include <sstream>
 #include <iostream>
 #include <cstring>
@@ -10,6 +10,11 @@ IrcClient::IrcClient(const char* server, int port)
     : server(server), port(port), session(nullptr) {
     memset(&callbacks, 0, sizeof(callbacks));
     callbacks.event_connect = event_connect;
+    callbacks.event_quit = dump_event;
+    callbacks.event_kick = dump_event;
+    callbacks.event_topic = dump_event;
+    callbacks.event_part = dump_event;
+    callbacks.event_privmsg = dump_event;
     callbacks.event_unknown = event_unknown;
     registrationStatus = false;
 
@@ -17,7 +22,7 @@ IrcClient::IrcClient(const char* server, int port)
     if (!session) {
         throw std::runtime_error("Could not create IRC session");
     }
-    irc_set_ctx(session, this); // TODO determine if this is necessary
+    irc_set_ctx(session, this);
 }
 
 IrcClient* IrcClient::getInstance(irc_session_t* session) {
@@ -91,6 +96,13 @@ void IrcClient::event_connect(irc_session_t* session, const char* event, const c
 }
 
 void IrcClient::event_unknown(irc_session_t* session, const char* event, const char* origin, const char** params, unsigned int count) {
+    IrcClient::parseEvent(session, event, origin, params, count);
+}
+
+void IrcClient::dump_event(irc_session_t* session, const char* event, const char* origin, const char** params, unsigned int count) {
+	IrcClient::parseEvent(session, event, origin, params, count);
+}
+void IrcClient::parseEvent(irc_session_t* session, const char* event, const char* origin, const char** params, unsigned int count) {
     IrcClient* instance = getInstance(session);
     if (!instance) {
         return;
@@ -102,7 +114,6 @@ void IrcClient::event_unknown(irc_session_t* session, const char* event, const c
     } else {
         receivedMessage = IrcClient::concatenateParams("", params, count);
     }
-    printf("%s\n", receivedMessage.c_str());
 
     if (strcmp(event, "(REGISTERED)") == 0) {
         instance->registrationStatus = true;
