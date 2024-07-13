@@ -35,6 +35,8 @@ public class ConnectionHandler implements Connection {
             output = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
             input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
+            connectionManager.sendWelcomeMessage(this);
+
             while(isAlive) {
                 handleInput(input.readLine());
             }   
