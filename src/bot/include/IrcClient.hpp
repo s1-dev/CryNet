@@ -3,6 +3,10 @@
 
 #include <libircclient.h>
 #include <string>
+#include "MessageParser.hpp"
+#include "ActionInfo.hpp"
+#include "Action.hpp"
+#include "PingAction.hpp"
 
 class IrcClient {
 public:

@@ -1,6 +1,5 @@
-#include "IrcClient.h"
-#include "MessageParser.h"
-#include "ActionInfo.hpp"
+#include "IrcClient.hpp"
+
 #include <sstream>
 #include <iostream>
 #include <cstring>
@@ -123,6 +122,19 @@ void IrcClient::parseEvent(irc_session_t* session, const char* event, const char
         return;
     }
     
-    ActionInfo actionInfo = MessageParser::parseMessage(receivedMessage);
+    ActionInfo actionInfo = MessageParser::parseMessage(event, params, count);
     // Create Action
+    Action* action = nullptr;
+    // temp test
+    action = new PingAction(42, false, 42);
+    /*if (actionInfo.getActionType() == ActionType::PING) { // check if bot was compiled to support this
+        action = new PingAction(42, std::string("test"), false, 42);
+    }*/
+
+    if (action) {
+        action->execute();
+        delete action;
+    }
+    //createAction(actionInfo);
 }
+

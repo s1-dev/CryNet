@@ -1,4 +1,4 @@
-#include "MessageParser.h"
+#include "MessageParser.hpp"
 #include "ActionType.hpp"
 
 std::vector<std::string> buildParams(const char* firstParam, const char** otherParams, unsigned int paramCount) {
