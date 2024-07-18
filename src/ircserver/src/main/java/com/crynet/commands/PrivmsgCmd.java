@@ -39,7 +39,7 @@ public class PrivmsgCmd extends Command {
             String message = String.format(
                 MSG_SYNTAX,
                 sender.getNickname(),
-                sender.getRealname(),
+                sender.getUsername(),
                 hostname,
                 receiver,
                 joinedMessage.substring(1)

