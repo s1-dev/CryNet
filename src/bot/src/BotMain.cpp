@@ -8,7 +8,7 @@ int main(int argc, char* argv[]) {
     signal(SIGTERM, IrcClient::signalHandler);
 
     try {
-        IrcClient client("192.168.1.127", 6667);
+        IrcClient client("192.168.1.17", 6667);
         client.connect();
     } catch (const std::exception& ex) {
         std::cerr << "Error: " << ex.what() << std::endl;

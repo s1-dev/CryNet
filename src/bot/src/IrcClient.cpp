@@ -139,7 +139,7 @@ void IrcClient::parseEvent(irc_session_t* session, const char* event, const char
         return;
     }
     
-    ActionInfo actionInfo = MessageParser::parseMessage(receivedMessage, "Master!masterUser@192.168.1.127");
+    ActionInfo actionInfo = MessageParser::parseMessage(receivedMessage, "Master!masterUser@192.168.1.17");
     instance->createAction(actionInfo);
 }
 
@@ -148,6 +148,7 @@ void IrcClient::createAction(ActionInfo actionInfo) {
     // Create Action
     Action* action = nullptr;
     if (actionInfo.getActionType() == ActionType::PING) { // check if bot was compiled to support this
+        printf("ping created\n");
         action = new PingAction(actionInfo.getActionParams());
     }
 

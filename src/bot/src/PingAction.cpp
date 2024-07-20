@@ -69,10 +69,12 @@ void PingAction::execute() {
     const char* algo = actionParams[ALGO_IDX].c_str();
 
     // send info to PacketLauncher
+    PacketLauncher packetLauncher(targetUri, targetPort, algo);
+    packetLauncher.craftPacket();
 
     if (strCompare(actionParams[ATTACK_CAP_IDX].c_str(), "LOOP")) {
         while (true) { // ping until external forces act
-            return; // temp
+            packetLauncher.launchPacket();
         }
         return;
     }
@@ -80,7 +82,7 @@ void PingAction::execute() {
     const int nPackets = atoi(actionParams[ATTACK_CAP_IDX].c_str());
 
     for (int i = 0; i < nPackets; i++) {
-
+        packetLauncher.launchPacket();
     }
 
 
