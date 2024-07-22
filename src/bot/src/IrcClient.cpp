@@ -52,9 +52,6 @@ void IrcClient::signalHandler(int signal) {
 
 std::string IrcClient::concatenateParams(const char* event, const char* origin, const char** params, unsigned int count) {
     std::string result;
-    //printf("Event: %s\n", event);
-    //printf("Origin: %s\n", origin);
-    //printf("Params[0]: %s\n", params[0]);
 
     if (strcmp(origin, "") != 0) {
         result += origin;
@@ -71,9 +68,6 @@ std::string IrcClient::concatenateParams(const char* event, const char* origin, 
         result += params[i];
         result += " ";
     }
-    
-    // Add the newline at the end
-    //result += "\n";
     
     return result;
 }
