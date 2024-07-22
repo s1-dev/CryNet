@@ -1,14 +1,8 @@
 #include "PacketLauncher.hpp"
 
-#include <tins/tins.h>
-
 #include <string.h>
 
 using namespace Tins;
-
-bool checkPacketType(const char* cString, const char* otherString) { // put string comp in utils file
-    return strcmp(cString, otherString) == 0;
-}
 
 PacketLauncher::PacketLauncher(const char* targetAddress, const int targetPort, const char* algo) 
  : targetPort(targetPort), packetType(algo) {
@@ -16,8 +10,14 @@ PacketLauncher::PacketLauncher(const char* targetAddress, const int targetPort, 
     this->ifaceInfo = iface.addresses();
     this->srcAddress = ifaceInfo.ip_addr;
     printf("targetAddress: %s\n", targetAddress);
-    IPv4Address convert(targetAddress);
-    this->dstAddress = convert;
+    try {
+        IPv4Address convert(targetAddress);
+        this->dstAddress = convert;
+    }
+    catch(const std::exception& e) {
+        IPv4Address convert("0.0.0.0"); // In case of invalid IPv4 string
+        this->dstAddress = convert;
+    }
     printf("targetAddress new: %s\n", dstAddress.to_string().c_str());
  }
 
@@ -34,23 +34,23 @@ PacketLauncher::PacketLauncher(const char* targetAddress, const int targetPort, 
  }
 
 void PacketLauncher::craftPacket() {
-    if (checkPacketType(packetType, "TCP-SYN")) {
+    if (GeneralUtils::cStrAreEqual(packetType, "TCP-SYN")) {
         this->pkt = craftTcpSynPacket();
-    } else if (checkPacketType(packetType, "TCP-ACK")) {
+    } else if (GeneralUtils::cStrAreEqual(packetType, "TCP-ACK")) {
         this->pkt = craftTcpAckPacket();
-    } else if (checkPacketType(packetType, "TCP-SYN-ACK")) {
+    } else if (GeneralUtils::cStrAreEqual(packetType, "TCP-SYN-ACK")) {
         this->pkt = craftTcpSynAckPacket();
-    } else if (checkPacketType(packetType, "TCP-XMAS")) {
+    } else if (GeneralUtils::cStrAreEqual(packetType, "TCP-XMAS")) {
         this->pkt = craftTcpXmasPacket();
-    } else if (checkPacketType(packetType, "UDP")) {
+    } else if (GeneralUtils::cStrAreEqual(packetType, "UDP")) {
         this->pkt = craftUdpPacket();
-    } else if (checkPacketType(packetType, "ICMP-REQ")) {
+    } else if (GeneralUtils::cStrAreEqual(packetType, "ICMP-REQ")) {
        this->pkt = craftIcmpRequestPacket();
-    } else if (checkPacketType(packetType, "ICMP-REP")) {
+    } else if (GeneralUtils::cStrAreEqual(packetType, "ICMP-REP")) {
         this->pkt = craftIcmpReplyPacket();
-    } else if (checkPacketType(packetType, "DNS")) {
+    } else if (GeneralUtils::cStrAreEqual(packetType, "DNS")) {
         this->pkt = craftDnsQueryPacket();
-    } else if (checkPacketType(packetType, "ARP-REQ")) {
+    } else if (GeneralUtils::cStrAreEqual(packetType, "ARP-REQ")) {
         this->pkt = craftArpQueryPacket();
     }
 }

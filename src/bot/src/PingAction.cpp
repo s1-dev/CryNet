@@ -1,48 +1,27 @@
 #include "PingAction.hpp"
 
-#include <string.h>
-
-bool strCompare(const char* cString, const char* otherString) { // put string comp in utils file
-    return strcmp(cString, otherString) == 0;
-}
-
-bool isNumber(const char* cString) {
-    if (cString == nullptr || *cString == '\0') {
-        return false;
-    }
-
-    while (*cString != '\0') {
-        if (!std::isdigit(*cString)) {
-            return false;
-        }
-        ++cString;
-    }
-
-    return true;
-}
-
 bool isValidAlgorithm(const char* cString) {
-    if (strCompare(cString, "TCP-SYN")) {
+    if (GeneralUtils::cStrAreEqual(cString, "TCP-SYN")) {
         return true;
-    } else if (strCompare(cString, "TCP-ACK")) {
+    } else if (GeneralUtils::cStrAreEqual(cString, "TCP-ACK")) {
         return true;
-    } else if (strCompare(cString, "TCP-SYN-ACK")) {
+    } else if (GeneralUtils::cStrAreEqual(cString, "TCP-SYN-ACK")) {
         return true;
-    } else if (strCompare(cString, "TCP-XMAS")) {
+    } else if (GeneralUtils::cStrAreEqual(cString, "TCP-XMAS")) {
         return true;
-    } else if (strCompare(cString, "UDP")) {
+    } else if (GeneralUtils::cStrAreEqual(cString, "UDP")) {
         return true;
-    } else if (strCompare(cString, "ICMP-REQ")) {
+    } else if (GeneralUtils::cStrAreEqual(cString, "ICMP-REQ")) {
         return true;
-    } else if (strCompare(cString, "ICMP-REP")) {
+    } else if (GeneralUtils::cStrAreEqual(cString, "ICMP-REP")) {
         return true;
-    } else if (strCompare(cString, "DNS")) {
+    } else if (GeneralUtils::cStrAreEqual(cString, "DNS")) {
         return true;
-    } else if (strCompare(cString, "ARP-REQ")) {
+    } else if (GeneralUtils::cStrAreEqual(cString, "ARP-REQ")) {
         return true;
-    } /*else if (strCompare(cString, "HTTP-GET")) {
+    } /*else if (GeneralUtils::cStrAreEqual(cString, "HTTP-GET")) {
          return true;
-    } else if (strCompare(cString, "HTTP-POST")) {
+    } else if (GeneralUtils::cStrAreEqual(cString, "HTTP-POST")) {
         return true;
     } */  // to be completed!
     return false;
@@ -72,7 +51,7 @@ void PingAction::execute() {
     PacketLauncher packetLauncher(targetUri, targetPort, algo);
     packetLauncher.craftPacket();
 
-    if (strCompare(actionParams[ATTACK_CAP_IDX].c_str(), "LOOP")) {
+    if (GeneralUtils::cStrAreEqual(actionParams[ATTACK_CAP_IDX].c_str(), "LOOP")) {
         while (true) { // ping until external forces act
             packetLauncher.launchPacket();
         }
@@ -100,7 +79,7 @@ void PingAction::checkParams() {
         return;
     }
 
-    if (!strCompare(actionParams[COMMAND_TYPE_IDX].c_str(), "PING")) {
+    if (!GeneralUtils::cStrAreEqual(actionParams[COMMAND_TYPE_IDX].c_str(), "PING")) {
         isValid = false;
         return;
     }
@@ -110,12 +89,12 @@ void PingAction::checkParams() {
         return;
     }
 
-    if (!isNumber(actionParams[TARGET_PORT_IDX].c_str())) {
+    if (!GeneralUtils::isNumber(actionParams[TARGET_PORT_IDX].c_str())) {
         isValid = false;
         return;
     }
 
-    if (!strCompare(actionParams[ATTACK_CAP_IDX].c_str(), "LOOP") && !isNumber(actionParams[ATTACK_CAP_IDX].c_str())) {
+    if (!GeneralUtils::cStrAreEqual(actionParams[ATTACK_CAP_IDX].c_str(), "LOOP") && !GeneralUtils::isNumber(actionParams[ATTACK_CAP_IDX].c_str())) {
         isValid = false;
         return;
     }

@@ -6,7 +6,9 @@
 #include "MessageParser.hpp"
 #include "ActionInfo.hpp"
 #include "Action.hpp"
+#ifdef ENABLE_PING_ACTION
 #include "PingAction.hpp"
+#endif
 
 class IrcClient {
 public:

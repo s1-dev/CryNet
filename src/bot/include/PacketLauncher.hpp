@@ -8,6 +8,8 @@
 #include <vector>
 #include <cstdlib>
 
+#include "GeneralUtils.hpp"
+
 using namespace Tins;
 
 class PacketLauncher {
@@ -39,9 +41,5 @@ private:
     EthernetII craftDnsQueryPacket();
     EthernetII craftArpQueryPacket();
 };
-
-
-
-
 
 #endif // PACKETLAUNCHER_HPP

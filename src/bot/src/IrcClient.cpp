@@ -147,10 +147,13 @@ void IrcClient::parseEvent(irc_session_t* session, const char* event, const char
 void IrcClient::createAction(ActionInfo actionInfo) {
     // Create Action
     Action* action = nullptr;
+    printf("Create action hit\n");
+    #ifdef ENABLE_PING_ACTION
     if (actionInfo.getActionType() == ActionType::PING) { // check if bot was compiled to support this
         printf("ping created\n");
         action = new PingAction(actionInfo.getActionParams());
     }
+    #endif
 
     if (action) {
         action->execute();

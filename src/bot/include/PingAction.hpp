@@ -7,18 +7,16 @@
 #include <cstdlib>
 #include "Action.hpp"
 #include "PacketLauncher.hpp"
+#include "GeneralUtils.hpp"
 
 class PingAction : public Action {
 public:
-    PingAction( 
-        std::vector<std::string> actionParams
-    );
+    PingAction(std::vector<std::string> actionParams);
 
     void execute() override;
     ActionType getActionType() override;
 
 private:
-    //PacketLauncher packetLauncher;
     std::vector<std::string> actionParams;
     bool isValid;
 

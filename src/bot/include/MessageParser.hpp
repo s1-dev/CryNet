@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 #include <cstring>
+#include "GeneralUtils.hpp"
 #include "ActionInfo.hpp"
 
 class MessageParser {
