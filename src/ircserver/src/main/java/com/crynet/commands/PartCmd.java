@@ -39,7 +39,7 @@ public class PartCmd extends Command {
                 continue;
             }
             if (currChannel != null && currChannel.containsUser(connection)) {
-                if (params.length == PARAM_COUNT)
+                if (params.length >= PARAM_COUNT)
                     messageChannel(currChannel, joinedMessage);
                 currChannel.removeConnectedUser(connection);
                 channelManager.removeIfEmpty(currChannel.getName());
@@ -64,7 +64,7 @@ public class PartCmd extends Command {
         String partingMessage = String.format(
                     MSG_SYNTAX,
                     sender.getNickname(),
-                    sender.getRealname(),
+                    sender.getUsername(),
                     hostname,
                     channel.getName(),
                     message.substring(1)

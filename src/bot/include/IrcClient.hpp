@@ -2,7 +2,13 @@
 #define IRCCLIENT_H
 
 #include <libircclient.h>
-#include <string>
+
+#include "MessageParser.hpp"
+#include "ActionInfo.hpp"
+#include "Action.hpp"
+#ifdef ENABLE_PING_ACTION
+#include "PingAction.hpp"
+#endif
 
 class IrcClient {
 public:
@@ -21,8 +27,9 @@ private:
     irc_callbacks_t callbacks;
 
     void closeConnection();
-    static std::string concatenateParams(const char* firstParam, const char** params, unsigned int count);
+    static std::string concatenateParams(const char* event , const char* origin, const char** params, unsigned int count);
     bool isRegistered();
+    void createAction(ActionInfo actionInfo);
 
     static void event_connect(irc_session_t* session, const char* event, const char* origin, const char** params, unsigned int count);
     static void event_unknown(irc_session_t* session, const char* event, const char* origin, const char** params, unsigned int count);

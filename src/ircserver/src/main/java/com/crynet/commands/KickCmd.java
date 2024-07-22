@@ -1,5 +1,6 @@
 package com.crynet.commands;
 
+import com.crynet.ClientData;
 import com.crynet.Server;
 import com.crynet.channels.Channel;
 import com.crynet.channels.ChannelManager;
@@ -10,7 +11,10 @@ import com.crynet.utils.StringUtils;
 public class KickCmd extends Command {
     private ChannelManager channelManager;
     private ConnectionManager connectionManager;
+    private ClientData sender;
     private boolean isMasterMsg;
+    private String hostname;
+    private final String MSG_SYNTAX = ":%s!%s@%s KICK %s %s \n";
     private final String SUCCESS_MSG = "User kicked! \n";
     private final String ERROR_MSG_1 = "Insufficient permissions to KICK \n";
     private final String ERROR_MSG_2 = "Inputted channel does not exist \n";
@@ -23,6 +27,8 @@ public class KickCmd extends Command {
         this.isMasterMsg = isMasterMsg;
         this.channelManager = srvInstance.getChannelManager();
         this.connectionManager = srvInstance.getConnectionManager();
+        this.sender = connection.getClientData();
+        this.hostname = srvInstance.getConfig().getServerHostname();
     }
 
     @Override
@@ -47,7 +53,7 @@ public class KickCmd extends Command {
         Connection connectionToKick = connectionManager.getConnectionViaNick(params[2]);
         
         specifiedChannel.removeUserViaNick(params[2]);
-        connectionToKick.messageClient(kickMsg);
+        sendKickMessage(connectionToKick, kickMsg, specifiedChannel);
         connectionToKick.getClientData().removeChannel(specifiedChannel);
         channelManager.removeIfEmpty(specifiedChannel.getName());
         connection.messageClient(SUCCESS_MSG);
@@ -56,6 +62,19 @@ public class KickCmd extends Command {
     @Override
     public CommandType getCommandType() {
         return CommandType.KICK;
+    }
+
+
+    private void sendKickMessage(Connection receiver, String message, Channel channel) {
+        String kickMessage = String.format(
+            MSG_SYNTAX,
+            sender.getNickname(),
+            sender.getUsername(),
+            hostname,
+            channel.getName(),
+            message.substring(1)
+        );
+        receiver.messageClient(kickMessage);
     }
 
 

