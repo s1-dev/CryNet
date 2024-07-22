@@ -87,7 +87,7 @@ public class ConnectionManager {
 
     private synchronized void killConnection(Connection connection) {
         if (connection.isMasterConnection()) {
-            markMasterConnection(MASTER_NOT_SET);
+            this.masterConnectionId = MASTER_NOT_SET;
         }
         connections.remove(connection);
         connection.kill();

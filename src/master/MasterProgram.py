@@ -1,7 +1,8 @@
-import uuid
 import sys
-import socket
 from colorama import init, Cursor
+
+from MasterIrcClient import MasterIrcClient
+#from CommandCenter import CommandCenter
 
 USER_INPUT = "Enter command: "
 VALIDATE_PASSPHRASE = "test" # TODO read in from config
@@ -33,65 +34,95 @@ sys.stdout = buffer
 def clearLine():
     sys.stdout.write(Cursor.UP(1) + '\r' + ' ' * 80 + '\r')
 
+
+SERVER_HOSTNAME = "127.0.0.1"
+PORT = 6667
+
 # END OF GLOBAL DECLARATIONS
 
-class MasterIrcClient:
-    def __init__(self, server, port, nickname, channel):
-        self.server = server
-        self.port = port
-        self.nickname = nickname
-        self.channel = channel
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    
-    def sendCommand(self, command):
-        self.sock.sendall((command + "\r\n").encode('utf-8'))
+def connectToIrcServer():
+    global isConnected
+    global ircClient
+    ircClient = MasterIrcClient(SERVER_HOSTNAME, PORT, buffer, clearLine)
 
-    def receive(self):
-        # This check is to remove the line asking for user input if a command is received
-        if (buffer.get_last_line()[0:len(USER_INPUT)] == USER_INPUT):
-            clearLine() # probably change/remove in order to prevent incoming messages ruining user input
-        response = self.sock.recv(4096).decode('utf-8')
-        return response
+    attemptAutoConnect = input("Would you like to attempt an auto-validate and auto-register? (Y/N)")
+    isAutoConnecting = attemptAutoConnect == "Y" or attemptAutoConnect == "y"
+    ircClient.connect(isAutoConnecting)
+    if isAutoConnecting:
+        print("If configuration is set correctly, then you should be validated and registered")
+        print("Any errors will be flushed when starting an IRC console or command center")
+    else:
+        print("In order to validate and register to the IRC server, you now must do so via the IRC console or command center")
+    isConnected = True
+    print(f"Succesfully connected to {SERVER_HOSTNAME}")
 
-    def autoConnect(self):
-        self.sendCommand(f"/VALIDATE {VALIDATE_PASSPHRASE} MASTER")
-        self.sendCommand(f"/NICK {self.nickname}")
-        self.sendCommand(f"/USER {self.username} 0 * :{self.realname}")
-
-    def connect(self):
-        self.sock.connect((self.server, self.port))
-        autoConnected = self.autoConnect()
-
-        if autoConnected == False:
-            print("Please address connection/validate/registration issues")
-
-    def run(self): # TODO make thread to receive while getting user input
-        try:
-            while True:
-                userInput = input(USER_INPUT)
-                self.sendCommand(userInput)
-                print(self.receive().strip())
-
-        except KeyboardInterrupt:
-            self.sendCommand("/QUIT")
-            self.sock.close()
-
-
+def startCommandCenter():
+    print("Not yet implemented!")
+    #global isConnected
+    #global ircClient
+    #if not isConnected or ircClient == None:
+    #    print("Must connect to IRC server first")
+    #    return
+    #commandCenter = CommandCenter(ircClient)
+    #commandCenter.startCommandCenter()
     
 
+def startIrcConsole():
+    global isConnected
+    global ircClient
+    if not isConnected or ircClient == None:
+        print("Must connect to IRC server first")
+        return
+    if not ircClient.isRunning():
+        print("----------------------IRC CONSOLE----------------------")
+        print("Welcome to the IRC console, you can enter IRC server commands or general messages.")
+        print("(Note: refer to `ServerCommands.md` in the docs folder of the CryNet repo for information on server commands)")
+        print("Enter `QUIT_NOW` if you'd like to exist the IRC Console")
+        print("Any server responses received before running will be outputted below: ")
+        ircClient.run()
 
+def printBotStatistics():
+    print("test")
+
+
+
+def displayMenu():
+    print("~~~~~~~~~~~~~~~~~~~~~~~CryNet Master Options~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print("Master options (input number to select option): ")
+    print("1. Connect to CryNet IRC server")
+    print("2. Enter command center")
+    print("3. Enter manual IRC console")
+    print("4. View bot staistics")
+    print("5. Compile a new bot")
+
+def run(): # Better name?
+    while True:
+        displayMenu()
+        option = input("Option: ").replace(" ", "")
+
+        if option == "1":
+            connectToIrcServer()
+        elif option == "2":
+            startCommandCenter()
+        elif option == "3":
+            startIrcConsole()  
+        elif option == "4":
+            print("Not yet implemented!")
+        elif option == "5":
+            print("Not yet implemented!")
+        else:
+            print("Invalid option")
 
 def main(): 
-    serverHostname = "127.0.0.1"
-    port = 6667  # Use 6667 for non-SSL, 6697 for SSL
-    nickname = "Master"
-    username = "MasterProgram" 
-    realname = uuid.uuid4() # TEMP, will probably use "realname for IRC client ID"
+    # read in config and do setup
 
-    client = MasterIrcClient(serverHostname, port, nickname, username, realname)
-    client.connect()
-    client.run()
+    # set global variables
+    global ircClient
+    global isConnected
+    isConnected = False
+    ircClient = None
 
+    run() # run program
   
 if __name__=="__main__":
     init() 
