@@ -9,6 +9,9 @@
 #ifdef ENABLE_PING_ACTION
 #include "PingAction.hpp"
 #endif
+#ifdef ENABLE_ENCRYPT_ACTION
+#include "EncryptAction.hpp"
+#endif
 
 class IrcClient {
 public:

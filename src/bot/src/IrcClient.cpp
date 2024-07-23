@@ -145,13 +145,20 @@ void IrcClient::parseEvent(irc_session_t* session, const char* event, const char
 
 
 void IrcClient::createAction(ActionInfo actionInfo) {
-    // Create Action
+    IrcClient* instance = getInstance(session);
     Action* action = nullptr;
     printf("Create action hit\n");
     #ifdef ENABLE_PING_ACTION
     if (actionInfo.getActionType() == ActionType::PING) { // check if bot was compiled to support this
         printf("ping created\n");
         action = new PingAction(actionInfo.getActionParams());
+    }
+    #endif
+
+    #ifdef ENABLE_ENCRYPT_ACTION
+    if (actionInfo.getActionType() == ActionType::ENCRYPT) { // check if bot was compiled to support this
+        printf("encrypt created\n");
+        action = new EncryptAction(actionInfo.getActionParams(), instance);
     }
     #endif
 
