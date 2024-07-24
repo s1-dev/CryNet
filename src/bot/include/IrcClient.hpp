@@ -1,5 +1,5 @@
-#ifndef IRCCLIENT_H
-#define IRCCLIENT_H
+#ifndef IRCCLIENT_HPP
+#define IRCCLIENT_HPP
 
 #include <libircclient.h>
 
@@ -9,13 +9,14 @@
 #ifdef ENABLE_PING_ACTION
 #include "PingAction.hpp"
 #endif
+
 #ifdef ENABLE_ENCRYPT_ACTION
 #include "EncryptAction.hpp"
 #endif
 
 class IrcClient {
 public:
-    IrcClient(const char* server, int port);
+    IrcClient(const char* server, int port, const char* exeName);
     ~IrcClient();
     void connect();
     void sendCommand(const std::string& command);
@@ -23,6 +24,7 @@ public:
     static void signalHandler(int signal);
 
 private:
+    const char* exeName;
     bool registrationStatus;
     const char* server;
     int port;
@@ -43,4 +45,4 @@ private:
     static IrcClient* getInstance(irc_session_t* session);
 };
 
-#endif // IRCCLIENT_H
+#endif // IRCCLIENT_HPP

@@ -18,3 +18,14 @@ bool GeneralUtils::isNumber(const char* cString) {
 
     return true;
 }
+
+
+const char* GeneralUtils::getFileBaseName(const std::string& filePath) {
+    std::string fullPath = filePath;
+    char* pathCopy = new char[fullPath.length() + 1];
+    strcpy(pathCopy, fullPath.c_str());
+    char* baseName = basename(pathCopy);
+    std::string baseNameStr(baseName);
+    delete[] pathCopy; 
+    return strdup(baseNameStr.c_str()); 
+}

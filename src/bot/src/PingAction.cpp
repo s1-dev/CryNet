@@ -37,6 +37,10 @@ ActionType PingAction::getActionType() {
     return ActionType::PING;
 }
 
+std::string PingAction::getMessage() {
+    return "";
+}
+
 
 void PingAction::execute() {
     if (!isValid) {

