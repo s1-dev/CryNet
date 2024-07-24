@@ -15,6 +15,7 @@ public:
 
     void execute() override;
     ActionType getActionType() override;
+    std::string getMessage() override;
 
 private:
     std::vector<std::string> actionParams;

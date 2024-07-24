@@ -8,6 +8,7 @@ public:
     virtual ~Action() {}
     virtual void execute() = 0;
     virtual ActionType getActionType() = 0;
+    virtual std::string getMessage() = 0;
 };
 
 #endif // ACTION_HPP
