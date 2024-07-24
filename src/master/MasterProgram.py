@@ -5,7 +5,7 @@ from MasterIrcClient import MasterIrcClient
 #from CommandCenter import CommandCenter
 
 USER_INPUT = "Enter command: "
-VALIDATE_PASSPHRASE = "test" # TODO read in from config
+VALIDATE_PASSPHRASE = "test"  # TODO read in from config
 
 class TerminalBuffer:
     def __init__(self):
@@ -22,12 +22,11 @@ class TerminalBuffer:
         sys.__stdout__.flush()
 
     def get_last_line(self):
-
         return self.lines[-1] if self.lines else None
-    
+
     def getLines(self):
         return self.lines
-    
+
 buffer = TerminalBuffer()
 sys.stdout = buffer
 

@@ -35,6 +35,8 @@ public class ConnectionHandler implements Connection {
             output = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
             input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
+            connectionManager.sendWelcomeMessage(this);
+
             while(isAlive) {
                 handleInput(input.readLine());
             }   
@@ -87,6 +89,10 @@ public class ConnectionHandler implements Connection {
 
     @Override
     public void messageClient(String serverResponse) { // TODO append newline char before messaging client and remove from formatted messages
+        if (!isMasterConnection()) {
+            serverResponse = serverResponse.replace("\n", " ");
+            serverResponse = serverResponse + "\n";
+        }
         try {
             output.write(serverResponse);
             output.flush();

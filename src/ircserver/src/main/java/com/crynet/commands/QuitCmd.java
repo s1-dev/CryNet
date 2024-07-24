@@ -37,7 +37,7 @@ public class QuitCmd extends Command {
             String quitingMessage = String.format(
                 MSG_SYNTAX,
                 sender.getNickname(),
-                sender.getRealname(),
+                sender.getUsername(),
                 hostname,
                 currChannel.getName(),
                 joinedMessage.substring(1)

@@ -6,19 +6,29 @@ import java.util.List;
 
 import com.crynet.ClientData;
 import com.crynet.Server;
+import com.crynet.channels.ChannelManager;
 
 public class ConnectionManager {
     private List<Connection> connections;
     private Server ircServerInstance;
     private int maxConnections;
     private String masterConnectionId;
+    private String serverHostname;
+    private ChannelManager channelManager;
     private final String MASTER_NOT_SET = "MASTER CONNECTION IS NOT SET";
 
-    public ConnectionManager(Server ircServerInstance, int maxConnections) {
+    public ConnectionManager(Server ircServerInstance, int maxConnections, String serverHostname, ChannelManager channelManager) {
         this.connections = new ArrayList<>();
         this.ircServerInstance = ircServerInstance;
         this.maxConnections = maxConnections;
+        this.channelManager = channelManager;
+        this.serverHostname = serverHostname;
         this.masterConnectionId = MASTER_NOT_SET;
+    }
+
+    public void sendWelcomeMessage(Connection connection) {
+        // IRC welcome message format
+        connection.messageClient(":" + serverHostname + " 001 " + connection.getId() + " :Connected to IRC server " + connection.getId());
     }
 
     public synchronized Connection getConnectionViaNick(String nickname) {
@@ -89,6 +99,11 @@ public class ConnectionManager {
         if (connection.isMasterConnection()) {
             this.masterConnectionId = MASTER_NOT_SET;
         }
+       
+        if (connection.getClientData().countOfConnectedChannels() > 0) {
+            connection.getClientData().leaveAllChannels(channelManager);
+        }
+
         connections.remove(connection);
         connection.kill();
     }
