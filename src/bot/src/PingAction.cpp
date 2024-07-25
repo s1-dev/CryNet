@@ -32,7 +32,6 @@ PingAction::PingAction(std::vector<std::string> actionParams)
     this->checkParams();
 }
 
-
 ActionType PingAction::getActionType() {
     return ActionType::PING;
 }
