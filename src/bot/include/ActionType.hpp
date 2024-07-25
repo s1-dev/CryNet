@@ -7,6 +7,7 @@ enum class ActionType {
     ENCRYPT,
     REPORT,
     FORK_BOMB,
+    GET_PASSWD,
     UNKNOWN
 };
 

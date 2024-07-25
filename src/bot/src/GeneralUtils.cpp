@@ -29,3 +29,16 @@ const char* GeneralUtils::getFileBaseName(const std::string& filePath) {
     delete[] pathCopy; 
     return strdup(baseNameStr.c_str()); 
 }
+
+
+std::vector<std::string> GeneralUtils::splitByNewLine(const std::string& input) {
+    std::vector<std::string> lines;
+    std::stringstream ss(input);
+    std::string line;
+    
+    while (std::getline(ss, line)) {
+        lines.push_back(line);
+    }
+    
+    return lines;
+}
