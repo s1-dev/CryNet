@@ -2,13 +2,13 @@ import socket
 import threading
 
 USER_INPUT = "Enter command: "
-VALIDATE_PASSPHRASE = "test" # TODO read in from config
 QUIT_MSG = "QUIT_NOW"
 
 class MasterIrcClient:
-    def __init__(self, server, port, buffer, clearLine):
+    def __init__(self, server, port, validatePass, buffer, clearLine):
         self.server = server
         self.port = port
+        self.validatePass = validatePass
         self.buffer = buffer
         self.clearLine = clearLine
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -62,7 +62,7 @@ class MasterIrcClient:
             self.receivedDataBuffer = []
 
     def autoConnect(self):
-        self.sendCommand(f"/VALIDATE {VALIDATE_PASSPHRASE} MASTER")
+        self.sendCommand(f"/VALIDATE {self.validatePass} MASTER")
         self.sendCommand(f"/NICK master")
         self.sendCommand(f"/USER masterUser 0 * :masterUser")
 
