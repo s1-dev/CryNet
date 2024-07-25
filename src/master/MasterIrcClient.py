@@ -64,7 +64,7 @@ class MasterIrcClient:
     def autoConnect(self):
         self.sendCommand(f"/VALIDATE {self.validatePass} MASTER")
         self.sendCommand(f"/NICK master")
-        self.sendCommand(f"/USER masterUser 0 * :masterUser")
+        self.sendCommand(f"/USER masterUser 0 * :masterRealName")
 
     def connect(self, attemptAutoConnect):
         self.sock.connect((self.server, self.port))
@@ -76,13 +76,13 @@ class MasterIrcClient:
 
     def run(self):
         self.flushReceivedData()
-        print(USER_INPUT, end='')
         self.running = True
         receiveThread = threading.Thread(target=self.receive)
         receiveThread.daemon = True
         receiveThread.start()
         try:
             while True:
+                print(USER_INPUT, end='')
                 userInput = input()
                 if userInput == QUIT_MSG:
                     self.running = False
