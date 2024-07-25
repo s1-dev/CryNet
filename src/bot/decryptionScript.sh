@@ -27,4 +27,3 @@ find / -type f -name $BOT_NAME 2>/dev/null
 
 printf "Now, decrypt your files by issuing the following command in the directory of the bot:\n"
 printf "$BOT_NAME DECRYPT UnhackablePassword123!\n"
-

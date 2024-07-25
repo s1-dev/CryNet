@@ -2,6 +2,7 @@
 #define ACTION_HPP
 
 #include "ActionType.hpp"
+#include <string>
 
 class Action {
 public:

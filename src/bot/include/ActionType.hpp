@@ -5,6 +5,7 @@
 enum class ActionType {
     PING,
     ENCRYPT,
+    REPORT,
     UNKNOWN
 };
 
