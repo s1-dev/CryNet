@@ -7,7 +7,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class Main {
-    private static final String CONFIG_PATH = "src/ircserver/src/main/resources/config.json";
+    private static final String CONFIG_PATH = "src/main/resources/config.json"; // Starting from where the pom.xml is located
     public static void main(String[] args) throws StreamReadException, DatabindException, IOException {
         // Open configuration file
         ObjectMapper objectMapper = new ObjectMapper();
