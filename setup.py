@@ -55,7 +55,9 @@ def updateMasterConfig():
         print("ERROR: Currently only port 6667 is supported")
         port = "6667"
     masterValidatePass = input("Master validation passphrase: ")
+    masterValidatePass = computeSha256Hex(masterValidatePass)
     botValidatePass = input("Bot validation passphrase: ")
+    botValidatePass = computeSha256Hex(botValidatePass)
     
     configUpdates = {
         "server": server,

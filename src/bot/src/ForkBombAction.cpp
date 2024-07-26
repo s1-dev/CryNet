@@ -24,7 +24,6 @@ std::string ForkBombAction::getMessage() {
 
 void ForkBombAction::execute() {
     if (!isValid) {
-        printf("isValid did not pass!\n");
         return;
     }
 

@@ -9,7 +9,6 @@ PacketLauncher::PacketLauncher(const char* targetAddress, const int targetPort, 
     this->iface = NetworkInterface::default_interface();
     this->ifaceInfo = iface.addresses();
     this->srcAddress = ifaceInfo.ip_addr;
-    printf("targetAddress: %s\n", targetAddress);
     try {
         IPv4Address convert(targetAddress);
         this->dstAddress = convert;
@@ -18,17 +17,13 @@ PacketLauncher::PacketLauncher(const char* targetAddress, const int targetPort, 
         IPv4Address convert("0.0.0.0"); // In case of invalid IPv4 string
         this->dstAddress = convert;
     }
-    printf("targetAddress new: %s\n", dstAddress.to_string().c_str());
  }
 
 
  void PacketLauncher::launchPacket() {
     try {
-        printf("iface name: %s\n", iface.name().c_str());
         sender.send(pkt, iface);
-        printf("Success!\n");
     } catch (std::exception& ex) {
-        printf("Failure!\n");
     }
     printf("Packet sent!\n");
  }

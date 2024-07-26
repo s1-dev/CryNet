@@ -21,7 +21,7 @@ class TerminalBuffer:
     def flush(self):
         sys.__stdout__.flush()
 
-    def get_last_line(self):
+    def getLastLine(self):
         return self.lines[-1] if self.lines else None
 
     def getLines(self):
@@ -82,6 +82,9 @@ def startIrcConsole():
         print("Any server responses received before running will be outputted below: ")
         ircClient.run()
 
+def startBotCompilation():
+    print("----------------------CryNet Bot Compilation----------------------") 
+
 def displayMenu():
     print("~~~~~~~~~~~~~~~~~~~~~~~CryNet Master Options~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     print("Master options (input number to select option): ")
@@ -105,7 +108,7 @@ def run(): # Better name?
         elif option == "4":
             print("Not yet implemented!")
         elif option == "5":
-            print("Not yet implemented!")
+            startBotCompilation()
         else:
             print("Invalid option")
 

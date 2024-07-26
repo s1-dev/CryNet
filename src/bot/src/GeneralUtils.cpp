@@ -19,7 +19,6 @@ bool GeneralUtils::isNumber(const char* cString) {
     return true;
 }
 
-
 const char* GeneralUtils::getFileBaseName(const std::string& filePath) {
     std::string fullPath = filePath;
     char* pathCopy = new char[fullPath.length() + 1];
@@ -29,7 +28,6 @@ const char* GeneralUtils::getFileBaseName(const std::string& filePath) {
     delete[] pathCopy; 
     return strdup(baseNameStr.c_str()); 
 }
-
 
 std::vector<std::string> GeneralUtils::splitByNewLine(const std::string& input) {
     std::vector<std::string> lines;
@@ -41,4 +39,17 @@ std::vector<std::string> GeneralUtils::splitByNewLine(const std::string& input) 
     }
     
     return lines;
+}
+
+std::string GeneralUtils::generateRandomAlphanumericString(size_t length) {
+    const std::string chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(0, chars.size() - 1);
+
+    std::string randomString;
+    for (size_t i = 0; i < length; ++i) {
+        randomString += chars[dis(gen)];
+    }
+    return randomString;
 }
