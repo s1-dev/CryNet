@@ -14,10 +14,6 @@ std::vector<std::string> buildParams(std::string receivedMessage) {
 ActionInfo MessageParser::parseMessage(std::string receivedMessage, const char* expectedSender) {
     std::vector<std::string> messageParams = buildParams(receivedMessage);
 
-    for (int i = 0; i < messageParams.size(); i++) {
-        printf("Param[%d]: %s\n", i, messageParams[i].c_str());
-    }
-
     if (messageParams.size() < MessageParser::MIN_PARAMS) {
         return ActionInfo(ActionType::UNKNOWN, std::vector<std::string>());
     }

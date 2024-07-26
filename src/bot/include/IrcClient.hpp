@@ -28,7 +28,7 @@
 
 class IrcClient {
 public:
-    IrcClient(std::string server, int port, const char* exeName, std::string botNick, std::string botUser, std::string assignedChannel, std::string botPass);
+    IrcClient(std::string server, int port, const char* exeName, std::string botNick, std::string botUser, std::string assignedChannel, std::string botPass, std::string masterNick);
     ~IrcClient();
     void connect();
     void sendCommand(const std::string& command);
@@ -40,6 +40,7 @@ private:
     bool registrationStatus;
     const char* server;
     int port;
+    std::string masterNick;
     std::string botNick;
     std::string botUser;
     std::string assignedChannel;

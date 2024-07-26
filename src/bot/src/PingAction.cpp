@@ -43,7 +43,6 @@ std::string PingAction::getMessage() {
 
 void PingAction::execute() {
     if (!isValid) {
-        printf("isValid DID NOT PASS!\n");
         return;
     }
     const char* targetUri = actionParams[TARGET_URI_IDX].c_str();
@@ -66,9 +65,6 @@ void PingAction::execute() {
     for (int i = 0; i < nPackets; i++) {
         packetLauncher.launchPacket();
     }
-
-
-    printf("isValid passed!\n");
 }
 
 

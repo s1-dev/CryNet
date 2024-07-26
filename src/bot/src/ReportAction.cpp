@@ -8,7 +8,6 @@ ReportAction::ReportAction(const std::vector<std::string>& actionParams)
 
 void ReportAction::execute() {
     if (!isValid) {
-        printf("isnt valid\n");
         return;
     }
     std::string result;

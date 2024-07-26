@@ -59,7 +59,6 @@ std::string EncryptAction::getMessage() {
 
 void EncryptAction::execute() { 
     if (!isValid) {
-        printf("isValid DID NOT PASS!\n");
         return;
     }
     const char* algo = actionParams[ALGO_IDX].c_str();
@@ -103,7 +102,6 @@ std::string EncryptAction::traverseFileSystem(const fs::path& startDir, CryptoMa
                     try {
                         if (isDecryption) {
                             if (entry.path().extension() == ".cry") {
-                                printf("THIS HIT\n");
                                 cryptoManager.decryptFile(entry.path().string());
                                 fs::remove(entry.path());
                                 count++;

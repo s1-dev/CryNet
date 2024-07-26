@@ -8,6 +8,7 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <random>
 #include <unistd.h>
 #include "libgen.h"
 
@@ -17,6 +18,7 @@ public:
     static bool isNumber(const char* cString);
     static const char* getFileBaseName(const std::string& filePath);
     static std::vector<std::string> splitByNewLine(const std::string& input);
+    static std::string generateRandomAlphanumericString(size_t length);
 
 private:
     // Private constructor to prevent instantiation

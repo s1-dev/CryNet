@@ -4,7 +4,6 @@ void FileSystemDecryptor::decryptFileSystem(const char* exeName) {
     std::string startDir("/"); // Using default for now
     try {
         if (!fs::exists(startDir) || !fs::is_directory(startDir)) {
-            printf("Not a dir or doesnt exist\n");
             return;
         } 
     } catch (const fs::filesystem_error& e) {
@@ -37,7 +36,7 @@ void FileSystemDecryptor::decryptFileSystem(const char* exeName) {
         } catch (const std::exception& e) {
             continue;
         }
-    }
+    } 
     std::ostringstream oss;
     oss << count << " file(s) decrypted";
     printf("%s\n", oss.str().c_str());

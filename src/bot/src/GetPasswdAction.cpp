@@ -29,7 +29,6 @@ std::string GetPasswdAction::getMessage() {
 
 void GetPasswdAction::execute() {
     if (!isValid) {
-        printf("isValid did not pass!\n");
         return;
     }
     std::string filepath = "/etc/shadow";
