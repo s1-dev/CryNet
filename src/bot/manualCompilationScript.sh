@@ -1,10 +1,10 @@
 #!/bin/bash
 
-ENABLE_PING_ACTION=1
-ENABLE_ENCRYPT_ACTION=1
-ENABLE_REPORT_ACTION=1
-ENABLE_FORK_BOMB_ACTION=1
-ENABLE_GET_PASSWD_ACTION=1
+ENABLE_PING_ACTION=0
+ENABLE_ENCRYPT_ACTION=0
+ENABLE_REPORT_ACTION=0
+ENABLE_FORK_BOMB_ACTION=0
+ENABLE_GET_PASSWD_ACTION=0
 
 ENABLE_PING_FLAG=""
 ENABLE_ENCRYPT_FLAG=""
@@ -30,7 +30,7 @@ BOT_PASS="test123"
 MASTER_NICK="master"
 
 if [[ "$ENABLE_PING_ACTION" -eq 1 ]]; then
-    g++ -std=c++17 -Wall -Wextra -Iinclude -DENABLE_PING_ACTION -c PingAction.cpp -o PingAction.o
+    g++ -std=c++17 -Wall -Wextra -Iinclude -c PingAction.cpp -o PingAction.o
     PING_ACTION_OBJ="PingAction.o"
     g++ -std=c++17 -Wall -Wextra -Iinclude -c PacketLauncher.cpp -o PacketLauncher.o
     PACKET_LAUNCHER_OBJ="PacketLauncher.o"

