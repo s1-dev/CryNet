@@ -4,7 +4,7 @@ CryNet is an advanced IRC Botnet Intended to be used in a penetration testing co
 
 ---
 
-# Features
+## Features
 * Simulate various cybersecurity threats including DDoS, ransomware, and system throttling
 * Customizable bots with multiple capabilities
 * IRC-based Command and Control (C&C) infrastructure
@@ -12,7 +12,7 @@ CryNet is an advanced IRC Botnet Intended to be used in a penetration testing co
 
 ---
 
-### System Requirements and Dependencies
+## System Requirements and Dependencies
 
 **Server**
 * OS: Any with Java Runtime Environment (JRE) 1.8
@@ -28,7 +28,7 @@ CryNet is an advanced IRC Botnet Intended to be used in a penetration testing co
 
 ---
 
-### Installation and Setup
+## Installation and Setup
 
 **General Installation**
 1. Clone the repository 
@@ -231,7 +231,7 @@ sudo ./irc_bot NO_DAEMON
 
 ---
 
-### Component Overview
+## Component Overview
 
 **IRC Server**
 The IRC Server, written in Java, acts as the central command hub for CryNet. It supports several hundred concurrent connections and facilitates communication between the Master Program and IRC Bots.
