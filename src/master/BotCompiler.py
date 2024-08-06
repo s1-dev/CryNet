@@ -4,7 +4,8 @@ import hashlib
 
 OBJ_CREATION_BASE = "g++ -std=c++17 -Wall -Wextra -Iinclude"
 
-BOT_FILES_PATH = "../bot/src/"
+SRC_FILES_PATH = "src/"
+INCLUDE_FILES_PATH = "include/"
 
 BOT_MAIN_OBJ = "BotMain"
 IRC_CLIENT_OBJ = "IrcClient"
@@ -47,7 +48,7 @@ def enableFlagSetup():
     return flagDict
 
 class BotCompiler:
-    def __init__(self, serverAddress, validatePassHash):
+    def __init__(self, serverAddress, validatePassHash, botPath):
         self.serverAddress = serverAddress
         self.validatePassHash = validatePassHash
         self.masterNick = "master"
@@ -60,6 +61,8 @@ class BotCompiler:
         self.enableFlags = enableFlagSetup()
         self.commands = []
         self.dependencies = []
+        self.srcPath = botPath + SRC_FILES_PATH
+        self.includePath = botPath + INCLUDE_FILES_PATH
 
     def enablePingAction(self):
         self.objectFiles.append(PING_ACTION_OBJ)
@@ -217,18 +220,21 @@ class BotCompiler:
         for object in self.objectFiles:
             cmd = ""
             if object == BOT_MAIN_OBJ:
-                cmd = f"{OBJ_CREATION_BASE} {self.enableFlags['ENCRYPT']} {self.stringifyMacros()} -c {BOT_FILES_PATH + object}.cpp {object}.o"
+                cmd = f"{OBJ_CREATION_BASE} -I{self.includePath} {self.enableFlags['ENCRYPT']} {self.stringifyMacros()} -c {self.srcPath + object}.cpp {object}.o"
             elif object == IRC_CLIENT_OBJ:
-                cmd = f"{OBJ_CREATION_BASE} {self.stringifyFlags()} -c {BOT_FILES_PATH + object}.cpp {object}.o"
+                cmd = f"{OBJ_CREATION_BASE} -I{self.includePath} {self.stringifyFlags()} -c {self.srcPath + object}.cpp {object}.o"
             else:
-                cmd = f"{OBJ_CREATION_BASE} -c {BOT_FILES_PATH + object}.cpp -o {object}.o"
+                cmd = f"{OBJ_CREATION_BASE} -I{self.includePath} -c {self.srcPath + object}.cpp -o {object}.o"
             self.commands.append(cmd)
         finalCmd = f"g++ {self.stringifyObjects()} -o {self.outFile} {self.stringifyDependencies()} {self.strip}"
         self.commands.append(finalCmd)
 
     def compile(self):
         for cmd in self.commands:
-            subprocess.run(cmd)
+            try:
+                subprocess.run(cmd)
+            except:
+                continue
 
     def compilationSetup(self):
 

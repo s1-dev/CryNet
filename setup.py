@@ -58,12 +58,16 @@ def updateMasterConfig():
     masterValidatePass = computeSha256Hex(masterValidatePass)
     botValidatePass = input("Bot validation passphrase: ")
     botValidatePass = computeSha256Hex(botValidatePass)
-    
+    botPath = input("Absolute path to bot folder (parent dir of bot source files): ")
+    if botPath[-1] != "/":
+        botPath += "/"
+
     configUpdates = {
         "server": server,
         "port": int(port),
         "masterValidatePass": masterValidatePass,
-        "botValidatePass": botValidatePass
+        "botValidatePass": botValidatePass,
+        "botPath": botPath
     }
 
     updateConfig(MASTER_PROGAM_CONFIG_PATH, configUpdates)
