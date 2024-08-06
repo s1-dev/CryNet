@@ -2,12 +2,15 @@
 
 CryNet is an advanced IRC Botnet Intended to be used in a penetration testing context. It is an open-source tool designed to simulate and test various security threats in a controlled environment. 
 
+---
 
 # Features
 * Simulate various cybersecurity threats including DDoS, ransomware, and system throttling
 * Customizable bots with multiple capabilities
 * IRC-based Command and Control (C&C) infrastructure
 * Cross-platform support with components written in C++, Java, and Python
+
+---
 
 ### System Requirements and Dependencies
 
@@ -22,6 +25,8 @@ CryNet is an advanced IRC Botnet Intended to be used in a penetration testing co
 **Master**
 * OS: Any with Python installed
 * Dependencies: Colorama, hashlib, socket, subprocess, threading, JSON
+
+---
 
 ### Installation and Setup
 
@@ -163,9 +168,9 @@ OUT_FILE="irc_bot"
 ./manualCompilationScript.sh
 ```
 
-4. Move the executable to the deseired "victim" machine 
+5. Move the executable to the deseired "victim" machine 
 
-5. Run the executable, it default runs as a background process. Otherwise, use "NO_DAEMON" command-line argument 
+6. Run the executable, it default runs as a background process. Otherwise, use "NO_DAEMON" command-line argument 
 
 ```
 sudo ./irc_bot
@@ -223,3 +228,16 @@ OR
 ```
 sudo ./irc_bot NO_DAEMON
 ```
+
+---
+
+### Component Overview
+
+**IRC Server**
+The IRC Server, written in Java, acts as the central command hub for CryNet. It supports several hundred concurrent connections and facilitates communication between the Master Program and IRC Bots.
+
+**Bot**
+CryNet's IRC Bots are written in C++ and are responsible for executing commands received from the IRC server. They can be compiled with various capabilities, enabling them to perform different security testing actions.
+
+**Master**
+The Master Program, written in Python, sends commands to the IRC Bots via the IRC Server. It allows users to remotely manage and control the actions performed by the bots. In addition, it provides a UI for bots to be compiled with different capabilities. 
