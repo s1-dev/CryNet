@@ -234,10 +234,13 @@ sudo ./irc_bot NO_DAEMON
 ## Component Overview
 
 **IRC Server**
+
 The IRC Server, written in Java, acts as the central command hub for CryNet. It supports several hundred concurrent connections and facilitates communication between the Master Program and IRC Bots.
 
 **Bot**
+
 CryNet's IRC Bots are written in C++ and are responsible for executing commands received from the IRC server. They can be compiled with various capabilities, enabling them to perform different security testing actions.
 
 **Master**
+
 The Master Program, written in Python, sends commands to the IRC Bots via the IRC Server. It allows users to remotely manage and control the actions performed by the bots. In addition, it provides a UI for bots to be compiled with different capabilities. 
