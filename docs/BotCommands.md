@@ -75,40 +75,6 @@ ENCRYPT {ENC_ALGORITHM} {ROOT|HOME} {ENC|DEC}
 ## Command: FORK_BOMB
 
 ### Description
-The `FORK_BOMB` command is used to start a fork bomb on the 
-
-### Syntax
-
-ENCRYPT {ENC_ALGORITHM} {ROOT|HOME} {ENC|DEC}
-
-### Parameters
-- **ENC_ALGORITHM**: Symmetric encryption algorithm to use
-- **ROOT|HOME**: ROOT to encrypt all files starting from "/", "HOME" to encrypt all files starting from "/home"
-- **ENC|DEC**: ENC to encrypt all files, DEC to decrypt any encrypted files
-
-### Examples
-- **Example 1**:
-    ENCRYPT AES-256 ROOT ENC
-
-- **Example 2**: 
-    ENCRYPT AES-128 HOME DEC
-
-### Symmetric encryption algorithms:
-- **AES-128**
-- **AES-192**
-- **AES-256**
-
-### Notes
-* Currently, only AES is the symmetric encryption algorithm used, with differing key lengths
-* AES is using cipher block chaining mode 
-* All encrpyted files will have the ".cry" extension attached to it 
-* Only files with the ".cry" extension will be decrpyted 
-
----
-
-## Command: FORK_BOMB
-
-### Description
 The `FORK_BOMB` command is used to start a fork bomb on the bot's host.
 
 ### Syntax
