@@ -7,7 +7,7 @@ data_file = "system_resource_consumption.json"
 
 data_points = []
 
-def monitor_resources(interval=1):
+def monitor_resources(interval, monitor_duration):
     start_time = time.time()
     while time.time() - start_time < monitor_duration:
         cpu_usage = psutil.cpu_percent(interval=interval)
@@ -24,11 +24,14 @@ def save_data_to_file():
     with open(data_file, 'w') as f:
         json.dump(data_points, f, indent=4)
 
-monitor_duration = 30 
-monitor_thread = threading.Thread(target=monitor_resources, daemon=True)
-monitor_thread.start()
+def main():
+    monitor_duration = 30 
+    monitor_thread = threading.Thread(target=monitor_resources(1, monitor_duration), daemon=True)
+    monitor_thread.start()
+    time.sleep(monitor_duration)
 
-time.sleep(monitor_duration)
+    save_data_to_file()
+    print(f"Data saved to {data_file}")
 
-save_data_to_file()
-print(f"Data saved to {data_file}")
+if __name__ == "__main__":
+    main()

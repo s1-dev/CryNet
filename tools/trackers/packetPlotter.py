@@ -23,9 +23,12 @@ def plot_packet_counts(filenames, labels, duration):
     plt.grid(True)
     plt.show()
 
-if __name__ == '__main__':
+def main():
     duration = 60  # Duration in seconds
     filenames = ['packet_counts_1_bots.json', 'packet_counts_2_bots.json', 'packet_counts_3_bots.json']
     labels = ['1 bot', '2 bots', '3 bots']
 
     plot_packet_counts(filenames, labels, duration)
+
+if __name__ == '__main__':
+    main()

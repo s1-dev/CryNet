@@ -134,6 +134,7 @@ def main():
     print("Welcome to CryNet project setup, please enter revelant information to setup configuration: ")
 
     configToUpdate = input("What config would you like to update? (MASTER|SERVER|BOTH) ")
+    configToUpdate = configToUpdate.replace(" ", "")
 
     if configToUpdate == "MASTER" or configToUpdate == "master":
         updateMasterConfig()

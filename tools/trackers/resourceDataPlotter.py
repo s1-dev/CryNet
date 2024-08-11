@@ -32,7 +32,10 @@ def plot_resources(data):
     plt.tight_layout()
     plt.show()
 
-if __name__ == '__main__':
+def main():
     data_file = "system_resource_consumption.json"
     data = load_data_from_file(data_file)
     plot_resources(data)
+
+if __name__ == '__main__':
+    main()
